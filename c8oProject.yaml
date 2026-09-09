@@ -1,10 +1,27 @@
 ↑convertigo: 8.4.0.m006
 ↓lib_ApiKeyManager [core.Project]: 
-  comment: Convertigo NGX builder Project
+  comment: |
+    'Centralized API key management library.
+    
+    ## Capabilities
+    
+    - Generates API keys and stores only their **SHA-256 fingerprint** and metadata in FullSync.
+    - Validates active, unexpired keys with optional scope enforcement.
+    - Lists key metadata and supports key revocation and reactivation.
+    
+    ## Security
+    
+    Administrative sequences—generation, listing, revocation, and reactivation—require an authenticated context.
+    
+    `validate_api_key` is intended for validation calls and **never persists the raw API key**.
+    
+    ## Scopes
+    
+    Provide scopes as a space-separated list, for example: `resources:read`.'
   contextTimeout: 59
   corsOrigin: =Origin
   httpSessionTimeout: 60
-  version: 8.4.0
+  version: 8.4.1
   ↓api_keys_store [connectors.FullSyncConnector]: 🗏 connectors/api_keys_store.yaml
   ↓void [connectors.SqlConnector]: 🗏 connectors/void.yaml
   ↓admin_login [sequences.GenericSequence]: 🗏 sequences/admin_login.yaml

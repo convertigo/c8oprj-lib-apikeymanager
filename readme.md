@@ -1,17 +1,31 @@
 
 
 
-# template_ngxBuilderIonic
+# lib_ApiKeyManager
 
-Convertigo NGX builder Project
+Centralized API key management library.
+
+## Capabilities
+
+- Generates API keys and stores only their **SHA-256 fingerprint** and metadata in FullSync.
+- Validates active, unexpired keys with optional scope enforcement.
+- Lists key metadata and supports key revocation and reactivation.
+
+## Security
+
+Administrative sequences—generation, listing, revocation, and reactivation—require an authenticated context.
+
+`validate_api_key` is intended for validation calls and **never persists the raw API key**.
+
+## Scopes
+
+Provide scopes as a space-separated list, for example: `resources:read`.
 
 
 For more technical informations : [documentation](./project.md)
 
 - [Installation](#installation)
-- [Mobile Application](#mobile-application)
-    - [Pages](#pages)
-        - [Page](#page)
+- [Mobile Library](#mobile-library)
 
 
 ## Installation
@@ -27,28 +41,22 @@ For more technical informations : [documentation](./project.md)
      <tr><td>To contribute</td><td>
 
      ```
-     template_ngxBuilderIonic=git@github.com:convertigo/c8oprj-template-ngx-builder.git:branch=8.4.0
+     lib_ApiKeyManager=https://github.com/convertigo/c8oprj-lib-apikeymanager.git:branch=master
      ```
      </td></tr>
      <tr><td>To simply use</td><td>
 
      ```
-     template_ngxBuilderIonic=git@github.com:convertigo/c8oprj-template-ngx-builder/archive/8.4.0.zip
+     lib_ApiKeyManager=https://github.com/convertigo/c8oprj-lib-apikeymanager/archive/master.zip
      ```
      </td></tr>
     </table>
-3. Click the `Finish` button. This will automatically import the __template_ngxBuilderIonic__ project
+3. Click the `Finish` button. This will automatically import the __lib_ApiKeyManager__ project
 
 
-## Mobile Application
+## Mobile Library
 
 Describes the mobile application global properties
-
-### Pages
-
-#### Page
-
-Default home page
 
 
 
