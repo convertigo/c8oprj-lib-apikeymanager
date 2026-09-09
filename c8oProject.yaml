@@ -1,7 +1,9 @@
 ↑convertigo: 8.4.0.m006
 ↓lib_ApiKeyManager [core.Project]: 
   comment: |
-    'Centralized API key management library.
+    '# API Key Manager
+    
+    Centralized API key management library.
     
     ## Capabilities
     
@@ -11,17 +13,18 @@
     
     ## Security
     
-    Administrative sequences—generation, listing, revocation, and reactivation—require an authenticated context.
+    Administrative sequences (generation, listing, revocation, and reactivation) require an authenticated context.
     
     `validate_api_key` is intended for validation calls and **never persists the raw API key**.
     
     ## Scopes
     
-    Provide scopes as a space-separated list, for example: `resources:read`.'
+    Provide scopes as a space-separated list, for example: `resources:read`.
+    '
   contextTimeout: 59
   corsOrigin: =Origin
   httpSessionTimeout: 60
-  version: 8.4.1
+  version: 8.4.2
   ↓api_keys_store [connectors.FullSyncConnector]: 🗏 connectors/api_keys_store.yaml
   ↓void [connectors.SqlConnector]: 🗏 connectors/void.yaml
   ↓admin_login [sequences.GenericSequence]: 🗏 sequences/admin_login.yaml

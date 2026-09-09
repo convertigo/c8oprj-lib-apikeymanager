@@ -3,6 +3,8 @@
 
 # lib_ApiKeyManager
 
+# API Key Manager
+
 Centralized API key management library.
 
 ## Capabilities
@@ -13,13 +15,14 @@ Centralized API key management library.
 
 ## Security
 
-Administrative sequences—generation, listing, revocation, and reactivation—require an authenticated context.
+Administrative sequences (generation, listing, revocation, and reactivation) require an authenticated context.
 
 `validate_api_key` is intended for validation calls and **never persists the raw API key**.
 
 ## Scopes
 
 Provide scopes as a space-separated list, for example: `resources:read`.
+
 
 
 For more technical informations : [documentation](./project.md)
