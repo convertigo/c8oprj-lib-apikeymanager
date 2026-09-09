@@ -1,0 +1,26 @@
+↑convertigo: 8.4.0.m006
+↓lib_ApiKeyManager [core.Project]: 
+  comment: Convertigo NGX builder Project
+  contextTimeout: 59
+  corsOrigin: =Origin
+  httpSessionTimeout: 60
+  version: 8.4.0
+  ↓api_keys_store [connectors.FullSyncConnector]: 🗏 connectors/api_keys_store.yaml
+  ↓void [connectors.SqlConnector]: 🗏 connectors/void.yaml
+  ↓admin_login [sequences.GenericSequence]: 🗏 sequences/admin_login.yaml
+  ↓admin_logout [sequences.GenericSequence]: 🗏 sequences/admin_logout.yaml
+  ↓generate_api_key [sequences.GenericSequence]: 🗏 sequences/generate_api_key.yaml
+  ↓list_api_keys [sequences.GenericSequence]: 🗏 sequences/list_api_keys.yaml
+  ↓reactivate_api_key [sequences.GenericSequence]: 🗏 sequences/reactivate_api_key.yaml
+  ↓revoke_api_key [sequences.GenericSequence]: 🗏 sequences/revoke_api_key.yaml
+  ↓validate_api_key [sequences.GenericSequence]: 🗏 sequences/validate_api_key.yaml
+  ↓project1 [references.ProjectSchemaReference]: 
+    projectName: mobilebuilder_tpl_8_4_0_ngx=https://github.com/convertigo/c8oprj-mobilebuilder-tpl/archive/mobilebuilder_tpl_8_4_0_ngx.zip
+  ↓Application [core.MobileApplication]: 
+    comment: Describes the mobile application global properties
+    splashRemoveMode: beforeUpdate
+    ↓Android [mobileplatforms.Android]: 
+      comment: Android platform
+    ↓iOS [mobileplatforms.IOs]: 
+      comment: iOS platform
+    ↓NgxApp [ngx.components.ApplicationComponent]: 🗏 mobileNgxApp.yaml

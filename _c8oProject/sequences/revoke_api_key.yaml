@@ -1,0 +1,54 @@
+accessibility: Hidden
+authenticatedContextRequired: true
+comment: Revokes an API key by marking the FullSync document inactive.
+↓prepare_revoke [steps.SimpleStep-1788890115828]: 
+  comment: Marks the selected key inactive.
+  expression: |
+    active = false;
+    revokedAt = new Date().toISOString();
+    updatedAt = revokedAt;
+↓store_revoke [steps.TransactionStep-1788890115867]: 
+  comment: Merges inactive status into the API key document.
+  output: true
+  sourceTransaction: lib_ApiKeyManager.api_keys_store.update_api_key
+  ↓_id [variables.StepVariable-1788890115908]: 
+  ↓active [variables.StepVariable-1788890115946]: 
+  ↓revokedAt [variables.StepVariable-1788890116002]: 
+  ↓updatedAt [variables.StepVariable-1788890116062]: 
+↓revoke_result [steps.JsonObjectStep-1788890116127]: 
+  key: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+      - SmartType: 
+        - ↑mode: PLAIN
+        - →→: result
+  ↓ok [steps.JsonFieldStep-1788890116170]: 
+    key: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: PLAIN
+          - →→: ok
+    type: bool
+    value: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: JS
+          - →→: true
+  ↓revokedAt [steps.JsonFieldStep-1788890116220]: 
+    key: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: PLAIN
+          - →→: revokedAt
+    value: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: JS
+          - →→: revokedAt
+↓_id [variables.RequestableVariable-1788889991081]: 
+  comment: FullSync API key document id.
+  required: true

@@ -1,0 +1,61 @@
+accessibility: Hidden
+comment: Simple admin login for the API key manager UI. Replace the demo credentials before production.
+↓check_credentials [steps.SimpleStep-1788890039755]: 
+  comment: Demo admin credential check.
+  expression: loginOk = String(username) == 'admin' && String(password) == 'admin';
+↓if_login_ok [steps.IfStep-1788890039800]: 
+  comment: Authenticate the session only when credentials are valid.
+  condition: loginOk === true
+  ↓set_admin_user [steps.SetAuthenticatedUserStep-1788890039839]: 
+    comment: Marks this HTTP session as API key manager admin.
+    userid: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: PLAIN
+          - →→: apikey-admin
+↓login_result [steps.JsonObjectStep-1788890039880]: 
+  key: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+      - SmartType: 
+        - ↑mode: PLAIN
+        - →→: result
+  ↓ok [steps.JsonFieldStep-1788890039917]: 
+    key: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: PLAIN
+          - →→: ok
+    type: bool
+    value: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: JS
+          - →→: loginOk === true
+  ↓message [steps.JsonFieldStep-1788890039955]: 
+    key: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: PLAIN
+          - →→: message
+    value: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: JS
+          - →→: 'loginOk ? ''Authenticated'' : ''Invalid credentials'''
+↓username [variables.RequestableVariable-1788889990811]: 
+  comment: Admin username.
+  required: true
+↓password [variables.RequestableVariable-1788889990886]: 
+  comment: Admin password.
+  required: true
+  value: 
+    - ↑ciphered: true
+    - ↑traceable: false
+    - →→: xd8e180806a1c1d83a6255212121ab827
+  visibility: 15

@@ -1,0 +1,153 @@
+accessibility: Hidden
+authenticatedContextRequired: true
+comment: Generates a raw API key once, stores only its SHA-256 fingerprint, and returns metadata plus the raw secret one time.
+↓prepare_api_key [steps.SimpleStep-1788890077903]: 
+  comment: Generates the raw API key and its SHA-256 hash; only keyHash is persisted.
+  expression: |
+    'function toHex(bytes) {
+      var out = '''';
+      for (var i = 0; i < bytes.length; i++) {
+        var v = bytes[i];
+        if (v < 0) v += 256;
+        var h = v.toString(16);
+        if (h.length < 2) h = ''0'' + h;
+        out += h;
+      }
+      return out;
+    }
+    var random = new java.security.SecureRandom();
+    var keyBytes = java.lang.reflect.Array.newInstance(java.lang.Byte.TYPE, 32);
+    random.nextBytes(keyBytes);
+    rawApiKey = ''c8o_ak_'' + toHex(keyBytes);
+    var md = java.security.MessageDigest.getInstance(''SHA-256'');
+    keyHash = toHex(md.digest(new java.lang.String(rawApiKey).getBytes(''UTF-8'')));
+    createdAt = new Date().toISOString();
+    if (typeof expiresAt == ''undefined'' || String(expiresAt).trim() == '''') {
+      expiresAt = new Date(new Date().getTime() + 365 * 24 * 60 * 60 * 1000).toISOString();
+    }
+    if (typeof scopes == ''undefined'' || String(scopes).trim() == '''') {
+      scopes = ''resources:read'';
+    }
+    scopes = String(scopes).replace(/,/g, '' '').replace(/\s+/g, '' '').trim();
+    scopeList = scopes.length ? scopes.split('' '') : [];
+    active = true;
+    revokedAt = '''';
+    type = ''apiKey'';
+    if (typeof label == ''undefined'' || String(label).trim() == '''') {
+      label = String(clientId || ''client'') + '' API key'';
+    }'
+↓store_api_key [steps.TransactionStep-1788890077940]: 
+  comment: Persists only the hash and metadata in FullSync.
+  output: true
+  sourceTransaction: lib_ApiKeyManager.api_keys_store.create_api_key
+  ↓type [variables.StepVariable-1788890077977]: 
+  ↓keyHash [variables.StepVariable-1788890078017]: 
+    value: 
+      - ↑ciphered: true
+      - ↑traceable: false
+      - →→: xd8e180806a1c1d83a6255212121ab827
+    visibility: 15
+  ↓clientId [variables.StepVariable-1788890078049]: 
+  ↓scopes [variables.StepVariable-1788890078087]: 
+  ↓scopeList [variables.StepMultiValuedVariable-1788890078124]: 
+  ↓active [variables.StepVariable-1788890078159]: 
+  ↓expiresAt [variables.StepVariable-1788890078201]: 
+  ↓createdAt [variables.StepVariable-1788890078235]: 
+  ↓label [variables.StepVariable-1788890078276]: 
+  ↓revokedAt [variables.StepVariable-1788890078317]: 
+↓api_key_result [steps.JsonObjectStep-1788890078351]: 
+  key: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+      - SmartType: 
+        - ↑mode: PLAIN
+        - →→: result
+  ↓ok [steps.JsonFieldStep-1788890078392]: 
+    key: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: PLAIN
+          - →→: ok
+    type: bool
+    value: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: JS
+          - →→: true
+  ↓rawApiKey [steps.JsonFieldStep-1788890078428]: 
+    key: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: PLAIN
+          - →→: rawApiKey
+    value: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: JS
+          - →→: rawApiKey
+  ↓keyHash [steps.JsonFieldStep-1788890078467]: 
+    key: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: PLAIN
+          - →→: keyHash
+    value: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: JS
+          - →→: keyHash
+  ↓clientId [steps.JsonFieldStep-1788890078502]: 
+    key: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: PLAIN
+          - →→: clientId
+    value: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: JS
+          - →→: String(clientId)
+  ↓scopes [steps.JsonFieldStep-1788890078542]: 
+    key: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: PLAIN
+          - →→: scopes
+    value: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: JS
+          - →→: scopes
+  ↓expiresAt [steps.JsonFieldStep-1788890078594]: 
+    key: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: PLAIN
+          - →→: expiresAt
+    value: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: JS
+          - →→: expiresAt
+↓clientId [variables.RequestableVariable-1788889990921]: 
+  comment: Stable client identifier.
+  required: true
+↓label [variables.RequestableVariable-1788889990954]: 
+  comment: Human-readable key label.
+↓scopes [variables.RequestableVariable-1788889990994]: 
+  comment: Space-separated scopes compatible with UrlMapperDemo.
+  value: resources:read
+↓expiresAt [variables.RequestableVariable-1788889991046]: 
+  comment: ISO-8601 expiration timestamp. Defaults to one year from now when empty.

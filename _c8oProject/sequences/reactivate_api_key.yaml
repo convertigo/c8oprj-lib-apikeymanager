@@ -1,0 +1,41 @@
+accessibility: Hidden
+authenticatedContextRequired: true
+comment: Reactivates an existing API key document.
+↓prepare_reactivate [steps.SimpleStep-1788890116255]: 
+  comment: Marks the selected key active again.
+  expression: |
+    active = true;
+    revokedAt = '';
+    updatedAt = new Date().toISOString();
+↓store_reactivate [steps.TransactionStep-1788890116293]: 
+  comment: Merges active status into the API key document.
+  output: true
+  sourceTransaction: lib_ApiKeyManager.api_keys_store.update_api_key
+  ↓_id [variables.StepVariable-1788890116336]: 
+  ↓active [variables.StepVariable-1788890116370]: 
+  ↓revokedAt [variables.StepVariable-1788890116409]: 
+  ↓updatedAt [variables.StepVariable-1788890116491]: 
+↓reactivate_result [steps.JsonObjectStep-1788890116528]: 
+  key: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+      - SmartType: 
+        - ↑mode: PLAIN
+        - →→: result
+  ↓ok [steps.JsonFieldStep-1788890116560]: 
+    key: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: PLAIN
+          - →→: ok
+    type: bool
+    value: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: JS
+          - →→: true
+↓_id [variables.RequestableVariable-1788889991117]: 
+  comment: FullSync API key document id.
+  required: true

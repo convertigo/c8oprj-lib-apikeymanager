@@ -1,0 +1,73 @@
+comment: 'Internal API key repository compatible with UrlMapperDemo: stores SHA-256 fingerprints, scopes, status, expiration, and audit metadata. Never store raw API keys here.'
+databaseName: api_keys_store
+secureDatabase: true
+↓create_api_key [transactions.couchdb.PostDocumentTransaction]: 
+  comment: 'Internal API key provisioning: stores keyHash only, never the raw key.'
+  fullSyncAclPolicy: anonymous
+  policy: create
+  ↓type [variables.RequestableVariable-1788889893381]: 
+    comment: Document type marker.
+    value: apiKey
+  ↓keyHash [variables.RequestableVariable-1788889893479]: 
+    comment: SHA-256 fingerprint of the raw API key. The raw key is never stored.
+    required: true
+  ↓clientId [variables.RequestableVariable-1788889893557]: 
+    comment: Owning client identifier.
+    required: true
+  ↓scopes [variables.RequestableVariable-1788889893632]: 
+    comment: Space-separated authorization scopes compatible with UrlMapperDemo.
+    value: resources:read
+  ↓active [variables.RequestableVariable-1788889893801]: 
+    comment: API key active/inactive status.
+    schemaType: xsd:boolean
+    value: true
+  ↓expiresAt [variables.RequestableVariable-1788889893861]: 
+    comment: ISO-8601 expiration timestamp.
+  ↓createdAt [variables.RequestableVariable-1788889893905]: 
+    comment: ISO-8601 creation timestamp.
+  ↓label [variables.RequestableVariable-1788889893964]: 
+    comment: Human-readable label displayed in the manager UI.
+  ↓revokedAt [variables.RequestableVariable-1788889894026]: 
+    comment: ISO-8601 revocation timestamp, empty while active.
+  ↓scopeList [variables.RequestableMultiValuedVariable-1788889970580]: 
+    comment: Scopes as an array for validation convenience; scopes string remains the compatibility field.
+↓find_api_key_by_hash [transactions.couchdb.PostFindTransaction]: 
+  comment: Internal lookup of an active API key by SHA-256 fingerprint. Raw keys must never be sent to FullSync.
+  p_limit: 1
+  p_selector: '(function(){ var selector = { keyHash: keyHash, ''$and'': [ { ''$or'': [ { active: true }, { active: ''true'' } ] }, { ''$or'': [ { expiresAt: { ''$exists'': false } }, { expiresAt: '''' }, { expiresAt: { ''$gt'': now } } ] } ] }; if (typeof requiredScope != ''undefined'' && String(requiredScope).trim() != '''') { var raw = String(requiredScope).trim(); var escaped = ''''; var specials = ''.+?^=!:()|[]\\''; for (var i = 0; i < raw.length; i++) { var ch = raw.charAt(i); escaped += specials.indexOf(ch) >= 0 ? ''\\'' + ch : ch; } selector.scopes = { ''$regex'': ''(^|\\s)'' + escaped + ''(\\s|$)'' }; } return selector; })()'
+  ↓keyHash [variables.RequestableVariable-1788889907791]: 
+    comment: SHA-256 fingerprint of the supplied API key.
+    required: true
+    value: 
+      - ↑ciphered: true
+      - ↑traceable: false
+      - →→: xd8e180806a1c1d83a6255212121ab827
+    visibility: 15
+  ↓requiredScope [variables.RequestableVariable-1788890150568]: 
+    comment: Optional required scope for validation.
+  ↓now [variables.RequestableVariable-1788890150607]: 
+    comment: Current ISO-8601 timestamp for expiration filtering.
+↓initialize_api_keys_database [transactions.couchdb.ResetDatabaseTransaction]: 
+  comment: Initializes the dedicated API key database. Do not run on production data.
+↓list_api_keys [transactions.couchdb.PostFindTransaction]: 
+  comment: Lists API key metadata without exposing raw API keys.
+  p_limit: 500
+  p_selector: '({ type: ''apiKey'' })'
+↓update_api_key [transactions.couchdb.PostDocumentTransaction]: 
+  comment: Updates API key metadata by document id; used for revoke, reactivate and scope/expiration changes.
+  fullSyncAclPolicy: anonymous
+  policy: merge
+  ↓_id [variables.RequestableVariable-1788889907834]: 
+    comment: FullSync document id to update.
+    required: true
+  ↓active [variables.RequestableVariable-1788889907871]: 
+    comment: API key active/inactive status.
+    schemaType: xsd:boolean
+  ↓revokedAt [variables.RequestableVariable-1788889907907]: 
+    comment: ISO-8601 revocation timestamp.
+  ↓scopes [variables.RequestableVariable-1788889907964]: 
+    comment: Updated space-separated scopes.
+  ↓expiresAt [variables.RequestableVariable-1788889908037]: 
+    comment: Updated ISO-8601 expiration timestamp.
+  ↓updatedAt [variables.RequestableVariable-1788889908084]: 
+    comment: ISO-8601 update timestamp.

@@ -1,0 +1,86 @@
+accessibility: Hidden
+comment: Validates a raw API key against the FullSync SHA-256 fingerprint store and an optional required scope.
+↓prepare_validation [steps.SimpleStep-1788890150641]: 
+  comment: Hashes the raw key and prepares validation filters. Raw key is not persisted.
+  expression: |
+    'function toHex(bytes) {
+      var out = '''';
+      for (var i = 0; i < bytes.length; i++) {
+        var v = bytes[i];
+        if (v < 0) v += 256;
+        var h = v.toString(16);
+        if (h.length < 2) h = ''0'' + h;
+        out += h;
+      }
+      return out;
+    }
+    var md = java.security.MessageDigest.getInstance(''SHA-256'');
+    keyHash = toHex(md.digest(new java.lang.String(String(apiKey)).getBytes(''UTF-8'')));
+    now = new Date().toISOString();
+    if (typeof requiredScope == ''undefined'') requiredScope = '''';'
+↓find_matching_key [steps.TransactionStep-1788890150677]: 
+  comment: Looks up one active, unexpired key matching the requested scope.
+  output: true
+  sourceTransaction: lib_ApiKeyManager.api_keys_store.find_api_key_by_hash
+  ↓keyHash [variables.StepVariable-1788890150719]: 
+    value: 
+      - ↑ciphered: true
+      - ↑traceable: false
+      - →→: xd8e180806a1c1d83a6255212121ab827
+    visibility: 15
+  ↓requiredScope [variables.StepVariable-1788890150798]: 
+  ↓now [variables.StepVariable-1788890150872]: 
+↓matching_key_count [steps.XMLCountStep-1788929859413]: 
+  comment: Counts matching API key documents returned by FullSync validation lookup.
+  nodeName: matchingKeyCount
+  sourceDefinition: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.XMLVector
+      - com.twinsoft.convertigo.beans.common.XMLVector: 
+        - java.lang.String: 
+          - ↑value: 1788890150677
+        - java.lang.String: 
+          - ↑value: ./document/couchdb_output/docs/*
+↓validation_result [steps.JsonObjectStep-1788890150945]: 
+  key: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+      - SmartType: 
+        - ↑mode: PLAIN
+        - →→: result
+  ↓keyHash [steps.JsonFieldStep-1788890151033]: 
+    key: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: PLAIN
+          - →→: keyHash
+    value: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: JS
+          - →→: keyHash
+  ↓requiredScope [steps.JsonFieldStep-1788890151076]: 
+    key: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: PLAIN
+          - →→: requiredScope
+    value: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: JS
+          - →→: String(requiredScope || '')
+↓apiKey [variables.RequestableVariable-1788889991156]: 
+  comment: Raw API key to validate. It is hashed before lookup and never stored.
+  required: true
+  value: 
+    - ↑ciphered: true
+    - ↑traceable: false
+    - →→: xd8e180806a1c1d83a6255212121ab827
+  visibility: 15
+↓requiredScope [variables.RequestableVariable-1788889991243]: 
+  comment: Optional scope required by the caller.

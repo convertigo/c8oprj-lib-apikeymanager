@@ -1,0 +1,7 @@
+accessibility: Hidden
+authenticatedContextRequired: true
+comment: Lists API key metadata without exposing raw API keys.
+↓load_api_keys [steps.TransactionStep-1788890115774]: 
+  comment: Returns API key documents for the admin UI.
+  output: true
+  sourceTransaction: lib_ApiKeyManager.api_keys_store.list_api_keys
