@@ -3,28 +3,46 @@
   comment: |
     '# API Key Manager
     
-    Centralized API key management library.
+    Centralized API key lifecycle management for applications that expose or protect APIs.
     
-    ## Capabilities
+    ## Purpose
     
-    - Generates API keys and stores only their **SHA-256 fingerprint** and metadata in FullSync.
-    - Validates active, unexpired keys with optional scope enforcement.
-    - Lists key metadata and supports key revocation and reactivation.
+    This library creates and manages API keys that an application can use to control access to its API endpoints. It is designed to support applications based on **Convertigo URL Mapper**, where an incoming request can be checked before access to a mapped resource is granted.
+    
+    ## Key lifecycle
+    
+    - **Generate a key** with a client identifier, an optional label, one or more scopes, and an optional expiration date.
+    - **Store securely**: only the key''s SHA-256 fingerprint and metadata are stored in FullSync. The raw key is returned only when it is generated and is never persisted.
+    - **Validate a key** by checking its fingerprint, active status, expiration date, and an optional required scope.
+    - **List keys** to retrieve administrative metadata without exposing raw key values.
+    - **Revoke a key** to immediately mark it inactive.
+    - **Reactivate a key** when access must be restored.
+    
+    ## URL Mapper integration
+    
+    A URL Mapper based application can call `validate_api_key` while processing a protected route. The application provides the API key received from the client and, when appropriate, the scope required by the route. Validation succeeds only when a matching key is active, unexpired, and authorized for that scope.
+    
+    This keeps authorization rules reusable and separate from individual URL mappings.
+    
+    ## Example
+    
+    The **UrlMapperDemo** project is an example consumer. It can use this library to protect mapped resources with API keys and to enforce scopes such as `resources:read`.
     
     ## Security
     
-    Administrative sequences (generation, listing, revocation, and reactivation) require an authenticated context.
+    Administrative sequences (`generate_api_key`, `list_api_keys`, `revoke_api_key`, and `reactivate_api_key`) require an authenticated context.
     
-    `validate_api_key` is intended for validation calls and **never persists the raw API key**.
+    `validate_api_key` is intended for request-time validation and **never persists the raw API key**.
     
     ## Scopes
     
     Provide scopes as a space-separated list, for example: `resources:read`.
+    
     '
   contextTimeout: 59
   corsOrigin: =Origin
   httpSessionTimeout: 60
-  version: 8.4.2
+  version: 8.4.3
   ↓api_keys_store [connectors.FullSyncConnector]: 🗏 connectors/api_keys_store.yaml
   ↓void [connectors.SqlConnector]: 🗏 connectors/void.yaml
   ↓admin_login [sequences.GenericSequence]: 🗏 sequences/admin_login.yaml
