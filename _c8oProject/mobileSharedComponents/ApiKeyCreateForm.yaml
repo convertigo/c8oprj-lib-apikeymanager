@@ -1,0 +1,574 @@
+comment: 'Autonomous API key creation form with one-time display of the generated secret. Inputs: application, defaultClientId, defaultLabel (initial form values). Event: keyCreated {application, result}.'
+↓application [ngx.components.UICompVariable-1789061840864]: 
+  comment: Host application identifier the new key belongs to.
+  value: '''default'''
+↓defaultClientId [ngx.components.UICompVariable-1789061840866]: 
+  comment: Initial client identifier value.
+↓defaultLabel [ngx.components.UICompVariable-1789061840868]: 
+  comment: Initial label value.
+↓keyCreated [ngx.components.UICompEvent-1789061840870]: 
+  attrName: keyCreated
+  comment: Emitted after a key is generated, with {application, result}.
+↓FormInit [ngx.components.UISharedComponentEvent-1789061840872]: 
+  comment: Initializes the form state from inputs.
+  componentEvent: onInit
+  ↓InitApplication [ngx.components.UIDynamicAction-1789062165545]: 
+    beanData: |
+      '{
+       "ionBean": "SetLocalAction",
+       "Property": "plain:application",
+       "Value": "script:this.application || ''default''"
+      }'
+  ↓InitClientId [ngx.components.UIDynamicAction-1789062165547]: 
+    beanData: |
+      '{
+       "ionBean": "SetLocalAction",
+       "Property": "plain:clientId",
+       "Value": "script:this.defaultClientId || ''''"
+      }'
+  ↓InitLabel [ngx.components.UIDynamicAction-1789062165549]: 
+    beanData: |
+      '{
+       "ionBean": "SetLocalAction",
+       "Property": "plain:label",
+       "Value": "script:this.defaultLabel || ''''"
+      }'
+  ↓InitExpirationPreset [ngx.components.UIDynamicAction-1789062165551]: 
+    beanData: |
+      '{
+       "ionBean": "SetLocalAction",
+       "Property": "plain:expirationPreset",
+       "Value": "script:''365''"
+      }'
+  ↓InitScopeResourcesRead [ngx.components.UIDynamicAction-1789062165553]: 
+    beanData: |
+      '{
+       "ionBean": "SetLocalAction",
+       "Property": "plain:scopeResourcesRead",
+       "Value": "script:true"
+      }'
+  ↓InitScopeResourcesWrite [ngx.components.UIDynamicAction-1789062165555]: 
+    beanData: |
+      '{
+       "ionBean": "SetLocalAction",
+       "Property": "plain:scopeResourcesWrite",
+       "Value": "script:true"
+      }'
+  ↓InitScopeFilesRead [ngx.components.UIDynamicAction-1789062165557]: 
+    beanData: |
+      '{
+       "ionBean": "SetLocalAction",
+       "Property": "plain:scopeFilesRead",
+       "Value": "script:true"
+      }'
+  ↓InitScopeFilesWrite [ngx.components.UIDynamicAction-1789062165559]: 
+    beanData: |
+      '{
+       "ionBean": "SetLocalAction",
+       "Property": "plain:scopeFilesWrite",
+       "Value": "script:true"
+      }'
+  ↓InitBusy [ngx.components.UIDynamicAction-1789062165561]: 
+    beanData: |
+      '{
+       "ionBean": "SetLocalAction",
+       "Property": "plain:busy",
+       "Value": "script:false"
+      }'
+  ↓InitError [ngx.components.UIDynamicAction-1789062165563]: 
+    beanData: |
+      '{
+       "ionBean": "SetLocalAction",
+       "Property": "plain:error",
+       "Value": "script:''''"
+      }'
+  ↓InitLastRawKey [ngx.components.UIDynamicAction-1789062165565]: 
+    beanData: |
+      '{
+       "ionBean": "SetLocalAction",
+       "Property": "plain:lastRawKey",
+       "Value": "script:''''"
+      }'
+  ↓InitLastCreated [ngx.components.UIDynamicAction-1789062165567]: 
+    beanData: |
+      '{
+       "ionBean": "SetLocalAction",
+       "Property": "plain:lastCreated",
+       "Value": "script:null"
+      }'
+↓CreatePanel [ngx.components.UIElement-1788930387496]: 
+  tagName: section
+  ↓CreatePanelClass [ngx.components.UIAttribute-1788930387498]: 
+    attrName: class
+    attrValue: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+        - MobileSmartSourceType: plain:akm-panel
+  ↓CreateTitle [ngx.components.UIElement-1788930387500]: 
+    tagName: h2
+    ↓CreateTitleText [ngx.components.UIText-1788930387502]: 
+      textValue: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+          - MobileSmartSourceType: plain:Nouvelle cle
+  ↓CreateFormList [ngx.components.UIDynamicElement-1788930387504]: 
+    beanData: '{"ionBean":"List"}'
+    tagName: ion-list
+    ↓CreateListClass [ngx.components.UIAttribute-1788930387506]: 
+      attrName: class
+      attrValue: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+          - MobileSmartSourceType: plain:akm-form-list
+    ↓CreateListLines [ngx.components.UIAttribute-1788930387508]: 
+      attrName: lines
+      attrValue: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+          - MobileSmartSourceType: plain:none
+    ↓ClientItem [ngx.components.UIDynamicElement-1788930387510]: 
+      beanData: '{"ionBean":"ListItem"}'
+      tagName: ion-item
+      ↓ClientInput [ngx.components.UIDynamicElement-1788930387512]: 
+        beanData: |
+          '{
+           "ionBean": "Input",
+           "ControlName": "plain:name1788930387512",
+           "DoubleBinding": "source:{\"filter\":\"Local\",\"project\":\"lib_ApiKeyManager\",\"input\":\"\",\"model\":{\"data\":[{\"localObject\":\"local\"}],\"path\":\"?.clientId\",\"prefix\":\"\",\"suffix\":\"\",\"custom\":\"\",\"useCustom\":false}}",
+           "Label": "plain:Client ID",
+           "LabelPlacement": "plain:stacked"
+          }'
+        tagName: ion-input
+    ↓LabelItem [ngx.components.UIDynamicElement-1788930387520]: 
+      beanData: '{"ionBean":"ListItem"}'
+      tagName: ion-item
+      ↓LabelInput [ngx.components.UIDynamicElement-1788930387522]: 
+        beanData: |
+          '{
+           "ionBean": "Input",
+           "ControlName": "plain:name1788930387522",
+           "DoubleBinding": "source:{\"filter\":\"Local\",\"project\":\"lib_ApiKeyManager\",\"input\":\"\",\"model\":{\"data\":[{\"localObject\":\"local\"}],\"path\":\"?.label\",\"prefix\":\"\",\"suffix\":\"\",\"custom\":\"\",\"useCustom\":false}}",
+           "Label": "plain:Label",
+           "LabelPlacement": "plain:stacked"
+          }'
+        tagName: ion-input
+    ↓ExpirationItem [ngx.components.UIDynamicElement-1788930387530]: 
+      beanData: '{"ionBean":"ListItem"}'
+      tagName: ion-item
+      ↓ExpirationPresetSelect [ngx.components.UIDynamicElement-1788936091232]: 
+        beanData: |
+          '{
+           "ionBean": "Select",
+           "ControlName": "plain:expirationPreset",
+           "DoubleBinding": "source:{\"filter\":\"Local\",\"project\":\"lib_ApiKeyManager\",\"input\":\"\",\"model\":{\"data\":[{\"localObject\":\"local\"}],\"path\":\"?.expirationPreset\",\"prefix\":\"\",\"suffix\":\"\",\"custom\":\"\",\"useCustom\":false}}",
+           "CancelText": "plain:Annuler",
+           "OkText": "plain:OK",
+           "Interface": "plain:popover",
+           "Label": "plain:Expiration",
+           "LabelPlacement": "plain:stacked",
+           "Placeholder": "plain:Choisir une duree",
+           "Value": "plain:365"
+          }'
+        tagName: ion-select
+        ↓Expire1Day [ngx.components.UIDynamicElement-1788936091234]: 
+          beanData: '{"ionBean":"SelectOption","Value":"plain:1"}'
+          tagName: ion-select-option
+          ↓Text [ngx.components.UIText-1788936091236]: 
+            textValue: 
+              - xmlizable: 
+                - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+                - MobileSmartSourceType: plain:1 jour
+        ↓Expire7Days [ngx.components.UIDynamicElement-1788936091238]: 
+          beanData: '{"ionBean":"SelectOption","Value":"plain:7"}'
+          tagName: ion-select-option
+          ↓Text [ngx.components.UIText-1788936091240]: 
+            textValue: 
+              - xmlizable: 
+                - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+                - MobileSmartSourceType: plain:7 jours
+        ↓Expire30Days [ngx.components.UIDynamicElement-1788936091242]: 
+          beanData: '{"ionBean":"SelectOption","Value":"plain:30"}'
+          tagName: ion-select-option
+          ↓Text [ngx.components.UIText-1788936091244]: 
+            textValue: 
+              - xmlizable: 
+                - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+                - MobileSmartSourceType: plain:30 jours
+        ↓Expire90Days [ngx.components.UIDynamicElement-1788936091246]: 
+          beanData: '{"ionBean":"SelectOption","Value":"plain:90"}'
+          tagName: ion-select-option
+          ↓Text [ngx.components.UIText-1788936091248]: 
+            textValue: 
+              - xmlizable: 
+                - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+                - MobileSmartSourceType: plain:90 jours
+        ↓Expire365Days [ngx.components.UIDynamicElement-1788936091250]: 
+          beanData: '{"ionBean":"SelectOption","Value":"plain:365"}'
+          tagName: ion-select-option
+          ↓Text [ngx.components.UIText-1788936091252]: 
+            textValue: 
+              - xmlizable: 
+                - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+                - MobileSmartSourceType: plain:1 an
+  ↓ScopeGrid [ngx.components.UIElement-1788930387540]: 
+    tagName: div
+    ↓ScopeGridClass [ngx.components.UIAttribute-1788930387542]: 
+      attrName: class
+      attrValue: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+          - MobileSmartSourceType: plain:akm-scope-grid
+    ↓ScopeResourcesRead [ngx.components.UIDynamicElement-1788930387544]: 
+      beanData: |
+        '{
+         "ionBean": "CheckBox",
+         "ControlName": "plain:name1788930387544",
+         "DoubleBinding": "source:{\"filter\":\"Local\",\"project\":\"lib_ApiKeyManager\",\"input\":\"\",\"model\":{\"data\":[{\"localObject\":\"local\"}],\"path\":\"?.scopeResourcesRead\",\"prefix\":\"\",\"suffix\":\"\",\"custom\":\"\",\"useCustom\":false}}"
+        }'
+      tagName: ion-checkbox
+      ↓ScopeResourcesReadText [ngx.components.UIText-1788930387550]: 
+        textValue: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+            - MobileSmartSourceType: plain:resources:read
+    ↓ScopeResourcesWrite [ngx.components.UIDynamicElement-1788930387552]: 
+      beanData: |
+        '{
+         "ionBean": "CheckBox",
+         "ControlName": "plain:name1788930387552",
+         "DoubleBinding": "source:{\"filter\":\"Local\",\"project\":\"lib_ApiKeyManager\",\"input\":\"\",\"model\":{\"data\":[{\"localObject\":\"local\"}],\"path\":\"?.scopeResourcesWrite\",\"prefix\":\"\",\"suffix\":\"\",\"custom\":\"\",\"useCustom\":false}}"
+        }'
+      tagName: ion-checkbox
+      ↓ScopeResourcesWriteText [ngx.components.UIText-1788930387558]: 
+        textValue: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+            - MobileSmartSourceType: plain:resources:write
+    ↓ScopeFilesRead [ngx.components.UIDynamicElement-1788930387560]: 
+      beanData: |
+        '{
+         "ionBean": "CheckBox",
+         "ControlName": "plain:name1788930387560",
+         "DoubleBinding": "source:{\"filter\":\"Local\",\"project\":\"lib_ApiKeyManager\",\"input\":\"\",\"model\":{\"data\":[{\"localObject\":\"local\"}],\"path\":\"?.scopeFilesRead\",\"prefix\":\"\",\"suffix\":\"\",\"custom\":\"\",\"useCustom\":false}}"
+        }'
+      tagName: ion-checkbox
+      ↓ScopeFilesReadText [ngx.components.UIText-1788930387566]: 
+        textValue: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+            - MobileSmartSourceType: plain:files:read
+    ↓ScopeFilesWrite [ngx.components.UIDynamicElement-1788930387568]: 
+      beanData: |
+        '{
+         "ionBean": "CheckBox",
+         "ControlName": "plain:name1788930387568",
+         "DoubleBinding": "source:{\"filter\":\"Local\",\"project\":\"lib_ApiKeyManager\",\"input\":\"\",\"model\":{\"data\":[{\"localObject\":\"local\"}],\"path\":\"?.scopeFilesWrite\",\"prefix\":\"\",\"suffix\":\"\",\"custom\":\"\",\"useCustom\":false}}"
+        }'
+      tagName: ion-checkbox
+      ↓ScopeFilesWriteText [ngx.components.UIText-1788930387574]: 
+        textValue: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+            - MobileSmartSourceType: plain:files:write
+  ↓CreateButton [ngx.components.UIDynamicElement-1788930387576]: 
+    beanData: |
+      '{
+       "ionBean": "Button",
+       "Disabled": "script:(local && local.busy === true) || !(local && local.clientId)",
+       "IonExpand": "plain:block"
+      }'
+    tagName: ion-button
+    ↓CreateIcon [ngx.components.UIElement-1788930387582]: 
+      tagName: ion-icon
+      ↓CreateIconName [ngx.components.UIAttribute-1788930387584]: 
+        attrName: name
+        attrValue: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+            - MobileSmartSourceType: plain:key-outline
+      ↓CreateIconSlot [ngx.components.UIAttribute-1788930387586]: 
+        attrName: slot
+        attrValue: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+            - MobileSmartSourceType: plain:start
+    ↓CreateButtonText [ngx.components.UIText-1788930387588]: 
+      textValue: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+          - MobileSmartSourceType: plain:Creer la cle
+    ↓CreateClick1 [ngx.components.UIControlEvent-1788930862686]: 
+      ↓ErrorHandler [ngx.components.UIActionErrorEvent-1788932145261]: 
+        ↓SetCreateError [ngx.components.UIDynamicAction-1788932146023]: 
+          beanData: |
+            '{
+             "ionBean": "SetLocalAction",
+             "Property": "plain:error",
+             "Value": "script:(out && out.message) || ''Erreur Convertigo.''"
+            }'
+        ↓SetBusyFalseOnCreateError [ngx.components.UIDynamicAction-1788932146025]: 
+          beanData: |
+            '{
+             "ionBean": "SetLocalAction",
+             "Property": "plain:busy",
+             "Value": "script:false"
+            }'
+      ↓SetBusyTrue [ngx.components.UIDynamicAction-1788932144439]: 
+        beanData: |
+          '{
+           "ionBean": "SetLocalAction",
+           "Property": "plain:busy",
+           "Value": "script:true"
+          }'
+      ↓ClearCreateError [ngx.components.UIDynamicAction-1788932144441]: 
+        beanData: |
+          '{
+           "ionBean": "SetLocalAction",
+           "Property": "plain:error",
+           "Value": "script:''''"
+          }'
+      ↓ClearGeneratedSecret [ngx.components.UIDynamicAction-1788932144443]: 
+        beanData: |
+          '{
+           "ionBean": "SetLocalAction",
+           "Property": "plain:lastRawKey",
+           "Value": "script:''''"
+          }'
+      ↓GenerateApiKey [ngx.components.UIDynamicAction-1788932144445]: 
+        beanData: |
+          '{
+           "ionBean": "CallSequenceAction",
+           "requestable": "plain:lib_ApiKeyManager.generate_api_key",
+           "cacheTtl": "plain:0",
+           "noLoading": "plain:true"
+          }'
+        ↓clientId [ngx.components.UIControlVariable-1788932145243]: 
+          varValue: 
+            - xmlizable: 
+              - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+              - MobileSmartSourceType: script:this.local && this.local.clientId
+        ↓label [ngx.components.UIControlVariable-1788932145245]: 
+          varValue: 
+            - xmlizable: 
+              - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+              - MobileSmartSourceType: script:this.local && this.local.label
+        ↓expiresAt [ngx.components.UIControlVariable-1788932145247]: 
+          varValue: 
+            - xmlizable: 
+              - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+              - MobileSmartSourceType: script:(function(){ var days = parseInt((this.local && this.local.expirationPreset) || '365', 10); if (!isFinite(days) || days <= 0) days = 365; return new Date(Date.now() + days * 24 * 60 * 60 * 1000).toISOString(); }).call(this)
+        ↓scopes [ngx.components.UIControlVariable-1788932145249]: 
+          varValue: 
+            - xmlizable: 
+              - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+              - MobileSmartSourceType: 'script:[(this.local && this.local.scopeResourcesRead) ? ''resources:read'' : null, (this.local && this.local.scopeResourcesWrite) ? ''resources:write'' : null, (this.local && this.local.scopeFilesRead) ? ''files:read'' : null, (this.local && this.local.scopeFilesWrite) ? ''files:write'' : null].filter(function(scope){ return !!scope; }).join('' '')'
+        ↓StoreGeneratedSecret [ngx.components.UIDynamicAction-1788932145251]: 
+          beanData: |
+            '{
+             "ionBean": "SetLocalAction",
+             "Property": "plain:lastRawKey",
+             "Value": "script:(function find(v){ if (!v) return ''''; if (typeof v === ''object'') { if (v.rawApiKey) return v.rawApiKey; for (var k in v) { if (Object.prototype.hasOwnProperty.call(v, k)) { var found = find(v[k]); if (found) return found; } } } return ''''; })(out)"
+            }'
+        ↓StoreCreatedResponse [ngx.components.UIDynamicAction-1788932145253]: 
+          beanData: |
+            '{
+             "ionBean": "SetLocalAction",
+             "Property": "plain:lastCreated",
+             "Value": "script:out"
+            }'
+        ↓application [ngx.components.UIControlVariable-1789061983884]: 
+          varValue: 
+            - xmlizable: 
+              - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+              - MobileSmartSourceType: script:this.local && this.local.application
+        ↓EmitKeyCreated [ngx.components.UIDynamicEmit-1789061999778]: 
+          beanData: |
+            '{
+             "ionBean": "EmitEventAction",
+             "event": "plain:keyCreated",
+             "data": "script:{ application: this.local && this.local.application, result: out }"
+            }'
+        ↓SetBusyFalseAfterCreate [ngx.components.UIDynamicAction-1789062000833]: 
+          beanData: |
+            '{
+             "ionBean": "SetLocalAction",
+             "Property": "plain:busy",
+             "Value": "script:false"
+            }'
+  ↓CreateErrorIf [ngx.components.UIControlDirective-1789062004120]: 
+    directiveExpression: '!!(local && local.error)'
+    directiveName: If
+    ↓CreateError [ngx.components.UIElement-1789062007971]: 
+      tagName: ion-note
+      ↓CreateErrorColor [ngx.components.UIAttribute-1789062007973]: 
+        attrName: color
+        attrValue: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+            - MobileSmartSourceType: plain:danger
+      ↓CreateErrorText [ngx.components.UIText-1789062007975]: 
+        textValue: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+            - MobileSmartSourceType: script:(local && local.error) || ''
+↓SecretIf [ngx.components.UIControlDirective-1788930667780]: 
+  directiveExpression: '!!(local && local.lastRawKey)'
+  directiveName: If
+  ↓SecretPanel [ngx.components.UIElement-1788930387590]: 
+    tagName: section
+    ↓SecretPanelClass [ngx.components.UIAttribute-1788930387592]: 
+      attrName: class
+      attrValue: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+          - MobileSmartSourceType: plain:akm-panel akm-secret-panel
+    ↓SecretHead [ngx.components.UIElement-1788930387596]: 
+      tagName: div
+      ↓SecretHeadClass [ngx.components.UIAttribute-1788930387598]: 
+        attrName: class
+        attrValue: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+            - MobileSmartSourceType: plain:akm-secret-head
+      ↓SecretTitleBlock [ngx.components.UIElement-1788930387600]: 
+        tagName: div
+        ↓SecretTitle [ngx.components.UIElement-1788930387602]: 
+          tagName: h2
+          ↓SecretTitleText [ngx.components.UIText-1788930387604]: 
+            textValue: 
+              - xmlizable: 
+                - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+                - MobileSmartSourceType: plain:Cle generee
+        ↓SecretHelp [ngx.components.UIElement-1788930387606]: 
+          tagName: p
+          ↓SecretHelpClass [ngx.components.UIAttribute-1788930387608]: 
+            attrName: class
+            attrValue: 
+              - xmlizable: 
+                - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+                - MobileSmartSourceType: plain:akm-muted
+          ↓SecretHelpText [ngx.components.UIText-1788930387610]: 
+            textValue: 
+              - xmlizable: 
+                - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+                - MobileSmartSourceType: plain:Copiez-la maintenant. Elle ne sera plus recuperable.
+      ↓CopyButton [ngx.components.UIDynamicElement-1788930387612]: 
+        beanData: |
+          '{
+           "ionBean": "Button",
+           "Disabled": "script:!(local && local.lastRawKey)",
+           "IonFill": "plain:clear"
+          }'
+        tagName: ion-button
+        ↓CopyIcon [ngx.components.UIElement-1788930387616]: 
+          tagName: ion-icon
+          ↓CopyIconName [ngx.components.UIAttribute-1788930387618]: 
+            attrName: name
+            attrValue: 
+              - xmlizable: 
+                - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+                - MobileSmartSourceType: plain:copy-outline
+          ↓CopyIconSlot [ngx.components.UIAttribute-1788930387620]: 
+            attrName: slot
+            attrValue: 
+              - xmlizable: 
+                - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+                - MobileSmartSourceType: plain:icon-only
+        ↓CopyClick1 [ngx.components.UIControlEvent-1788930867086]: 
+          ↓CopyRawKey [ngx.components.UICustomAction-1788932149690]: 
+            actionValue: 
+              - xmlizable: 
+                - ↑classname: com.twinsoft.convertigo.beans.common.FormatedContent
+                - com.twinsoft.convertigo.beans.common.FormatedContent: 
+                  →: |
+                    		try {
+                    			if (navigator && navigator.clipboard && page.local && page.local.lastRawKey) {
+                    				navigator.clipboard.writeText(page.local.lastRawKey).then(function(res) { resolve(res); }).catch(function(err) { reject(err); });
+                    			} else {
+                    				resolve();
+                    			}
+                    		} catch (err) {
+                    			reject(err);
+                    		}
+                    
+    ↓RawKeyCode [ngx.components.UIElement-1788930387622]: 
+      tagName: code
+      ↓RawKeyText [ngx.components.UIText-1788930387624]: 
+        textValue: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+            - MobileSmartSourceType: script:(local && local.lastRawKey) || ''
+↓FormStyle [ngx.components.UIStyle-1789062168001]: 
+  comment: Encapsulated styles for the creation form and the one-time secret panel.
+  styleContent: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.FormatedContent
+      - com.twinsoft.convertigo.beans.common.FormatedContent: 
+        →: |
+          ':host {
+            --akm-border: #d5dde8;
+            --akm-surface: #ffffff;
+            --akm-soft: #f4f7fb;
+            --akm-text: #182235;
+            --akm-muted: #5f6f85;
+            display: grid;
+            gap: 18px;
+          }
+          
+          h2, h3, p { margin-top: 0; }
+          h2 { margin-bottom: 12px; color: var(--akm-text); font-size: 18px; }
+          
+          .akm-panel {
+            border: 1px solid var(--akm-border);
+            border-radius: 8px;
+            background: var(--akm-surface);
+            padding: 18px;
+            box-shadow: 0 12px 28px rgba(24, 34, 53, 0.08);
+          }
+          
+          .akm-muted { color: var(--akm-muted); }
+          
+          .akm-form-list {
+            display: grid;
+            gap: 10px;
+            background: transparent;
+            padding: 0;
+          }
+          
+          .akm-form-list ion-item {
+            --background: var(--akm-soft);
+            --border-radius: 8px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+          }
+          
+          .akm-scope-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 10px 16px;
+            margin: 14px 0 18px;
+          }
+          
+          .akm-secret-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+          }
+          
+          .akm-secret-panel code {
+            display: block;
+            max-width: 100%;
+            overflow-wrap: anywhere;
+            white-space: normal;
+            padding: 12px;
+            border-radius: 8px;
+            background: #101827;
+            color: #d6f7ec;
+          }
+          
+          @media (max-width: 860px) {
+            .akm-scope-grid { grid-template-columns: 1fr; }
+          }
+          '

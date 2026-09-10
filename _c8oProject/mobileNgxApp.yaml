@@ -59,6 +59,10 @@ componentScriptContent:
         '
 tplProjectName: mobilebuilder_tpl_8_4_0_ngx
 ↓Menu [ngx.components.UIDynamicMenu-1500890597895]: 🗏 mobileMenus/Menu.yaml
+↓ApiKeyAccessGuard [ngx.components.UISharedRegularComponent-1789061546607]: 🗏 mobileSharedComponents/ApiKeyAccessGuard.yaml
+↓ApiKeyList [ngx.components.UISharedRegularComponent-1789061835874]: 🗏 mobileSharedComponents/ApiKeyList.yaml
+↓ApiKeyCreateForm [ngx.components.UISharedRegularComponent-1789061838436]: 🗏 mobileSharedComponents/ApiKeyCreateForm.yaml
+↓ApiKeyManagerPanel [ngx.components.UISharedRegularComponent-1789061840998]: 🗏 mobileSharedComponents/ApiKeyManagerPanel.yaml
 ↓Page [ngx.components.PageComponent-1500538678074]: 🗏 mobilePages/Page.yaml
 ↓Style [ngx.components.UIStyle-1491635462437]: 
   comment: You can add some global application styles here

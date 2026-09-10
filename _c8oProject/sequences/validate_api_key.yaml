@@ -30,6 +30,7 @@ comment: Validates a raw API key against the FullSync SHA-256 fingerprint store 
     visibility: 15
   ↓requiredScope [variables.StepVariable-1788890150798]: 
   ↓now [variables.StepVariable-1788890150872]: 
+  ↓application [variables.StepVariable-1789061498366]: 
 ↓matching_key_count [steps.XMLCountStep-1788929859413]: 
   comment: Counts matching API key documents returned by FullSync validation lookup.
   nodeName: matchingKeyCount
@@ -84,3 +85,5 @@ comment: Validates a raw API key against the FullSync SHA-256 fingerprint store 
   visibility: 15
 ↓requiredScope [variables.RequestableVariable-1788889991243]: 
   comment: Optional scope required by the caller.
+↓application [variables.RequestableVariable-1789061498336]: 
+  comment: Optional host application the key must belong to.

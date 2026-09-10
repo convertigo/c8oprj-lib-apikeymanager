@@ -1,0 +1,34 @@
+accessibility: Hidden
+comment: Reports whether the current HTTP session holds the Convertigo WEB_ADMIN role (same method as lib_ConvertigoMCP.McpAdminStatus).
+↓compute_admin_status [steps.SimpleStep-1789060270427]: 
+  comment: Reports whether the session is a Convertigo WEB_ADMIN session or carries a delegated admin role from the host application.
+  expression: |
+    'var __req = context.httpServletRequest;
+    var __session = (__req == null) ? null : __req.getSession(false);
+    var __isAdmin = false, __delegated = false;
+    try {
+      __isAdmin = __session != null && Packages.com.twinsoft.convertigo.engine.Engine.authenticatedSessionManager.hasRole(__session, Packages.com.twinsoft.convertigo.engine.AuthenticatedSessionManager.Role.WEB_ADMIN);
+    } catch (e) { __isAdmin = false; }
+    try {
+      __delegated = __session != null && String(__session.getAttribute(''apiKeyManager.role'')) == ''admin'';
+    } catch (e) { __delegated = false; }
+    var __authorized = __isAdmin || __delegated;
+    adminStatusResult = {
+      status: __authorized ? ''ok'' : ''forbidden'',
+      authorized: __authorized,
+      authority: __isAdmin ? ''web_admin'' : (__delegated ? ''delegated'' : ''''),
+      message: __authorized ? '''' : "Privileges administrateur requis. Ouvrez cette application depuis la console d''administration Convertigo, ou connectez-vous via l''application hote qui delegue le role administrateur de l''API Key Manager."
+    };'
+↓result [steps.JsonToXmlStep-1789060270429]: 
+  jsonObject: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+      - SmartType: 
+        - ↑mode: JS
+        - →→: adminStatusResult
+  key: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+      - SmartType: 
+        - ↑mode: PLAIN
+        - →→: result

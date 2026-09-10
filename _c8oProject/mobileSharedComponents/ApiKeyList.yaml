@@ -1,0 +1,740 @@
+comment: 'Autonomous API key list for one host application: filter, refresh, revoke and reactivate. Inputs: application, filter, refreshToken (change it, e.g. Date.now(), to force a reload). Events: keysLoaded {application,count}, keyRevoked {id,application}, keyReactivated {id,application}.'
+↓application [ngx.components.UICompVariable-1789061838296]: 
+  comment: Host application identifier. Keys are scoped by it.
+  value: '''default'''
+↓filter [ngx.components.UICompVariable-1789061838298]: 
+  comment: 'Initial status filter: active, revoked, expired or all.'
+  value: '''active'''
+↓refreshToken [ngx.components.UICompVariable-1789061838300]: 
+  comment: Change this value (for example Date.now()) to force the list to reload.
+  value: 0
+↓keysLoaded [ngx.components.UICompEvent-1789061838302]: 
+  attrName: keysLoaded
+  comment: Emitted after the key list is loaded, with {application, count}.
+↓keyRevoked [ngx.components.UICompEvent-1789061838304]: 
+  attrName: keyRevoked
+  comment: Emitted after a key is revoked, with {id, application}.
+↓keyReactivated [ngx.components.UICompEvent-1789061838306]: 
+  attrName: keyReactivated
+  comment: Emitted after a key is reactivated, with {id, application}.
+↓ListInit [ngx.components.UISharedComponentEvent-1789061838308]: 
+  comment: Initializes local state from inputs and loads the keys.
+  componentEvent: onInit
+  ↓InitApplication [ngx.components.UIDynamicAction-1789062158285]: 
+    beanData: |
+      '{
+       "ionBean": "SetLocalAction",
+       "Property": "plain:application",
+       "Value": "script:this.application || ''default''"
+      }'
+  ↓InitFilter [ngx.components.UIDynamicAction-1789062158287]: 
+    beanData: |
+      '{
+       "ionBean": "SetLocalAction",
+       "Property": "plain:filter",
+       "Value": "script:this.filter || ''active''"
+      }'
+  ↓InitRefreshToken [ngx.components.UIDynamicAction-1789062158289]: 
+    beanData: |
+      '{
+       "ionBean": "SetLocalAction",
+       "Property": "plain:refreshToken",
+       "Value": "script:this.refreshToken"
+      }'
+  ↓InitKeys [ngx.components.UIDynamicAction-1789062158291]: 
+    beanData: |
+      '{
+       "ionBean": "SetLocalAction",
+       "Property": "plain:keys",
+       "Value": "script:[]"
+      }'
+  ↓InitError [ngx.components.UIDynamicAction-1789062158293]: 
+    beanData: |
+      '{
+       "ionBean": "SetLocalAction",
+       "Property": "plain:error",
+       "Value": "script:''''"
+      }'
+  ↓InitBusy [ngx.components.UIDynamicAction-1789062158295]: 
+    beanData: |
+      '{
+       "ionBean": "SetLocalAction",
+       "Property": "plain:busy",
+       "Value": "script:true"
+      }'
+  ↓LoadKeysOnInit [ngx.components.UIDynamicAction-1789062158297]: 
+    beanData: |
+      '{
+       "ionBean": "CallSequenceAction",
+       "requestable": "plain:lib_ApiKeyManager.list_api_keys",
+       "cacheTtl": "plain:0",
+       "noLoading": "plain:true"
+      }'
+    ↓LoadFailure [ngx.components.UIActionFailureEvent-1789062159113]: 
+      ↓StoreLoadError [ngx.components.UIDynamicAction-1789062159891]: 
+        beanData: |
+          '{
+           "ionBean": "SetLocalAction",
+           "Property": "plain:error",
+           "Value": "script:(out && out.message) || ''Erreur Convertigo.''"
+          }'
+      ↓StopBusyOnLoadError [ngx.components.UIDynamicAction-1789062159893]: 
+        beanData: |
+          '{
+           "ionBean": "SetLocalAction",
+           "Property": "plain:busy",
+           "Value": "script:false"
+          }'
+    ↓application [ngx.components.UIControlVariable-1789062159111]: 
+      varValue: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+          - MobileSmartSourceType: script:this.application || 'default'
+    ↓StoreKeysOnInit [ngx.components.UIDynamicAction-1789062159895]: 
+      beanData: |
+        '{
+         "ionBean": "SetLocalAction",
+         "Property": "plain:keys",
+         "Value": "script:(function scan(v){ var result = []; var seen = {}; function valueOf(o, n){ if (!o) return ''''; var v = o[n]; if (v == null) return ''''; if (typeof v === ''object'') { if (v._text != null) return String(v._text); if (v.text != null) return String(v.text); if (v.value != null) return String(v.value); } return String(v); } function boolOf(v){ return v === true || String(v).toLowerCase() === ''true''; } function normalize(key){ var active = boolOf(valueOf(key, ''active'') || key.active); var expiresAt = valueOf(key, ''expiresAt''); var expired = !!expiresAt && new Date(expiresAt).getTime() <= Date.now(); return {_id: valueOf(key, ''_id'') || valueOf(key, ''id''), _rev: valueOf(key, ''_rev''), type: ''apiKey'', keyHash: valueOf(key, ''keyHash''), clientId: valueOf(key, ''clientId''), scopes: valueOf(key, ''scopes''), application: valueOf(key, ''application''), active: active, expiresAt: expiresAt, createdAt: valueOf(key, ''createdAt''), label: valueOf(key, ''label''), revokedAt: valueOf(key, ''revokedAt''), status: !active ? ''revoked'' : (expired ? ''expired'' : ''active'')}; } function looksLikeKey(x){ return valueOf(x, ''type'') === ''apiKey'' || !!valueOf(x, ''keyHash''); } function walk(x){ if (!x) return; if (Array.isArray(x)) { x.forEach(function(item){ walk(item && item.doc ? item.doc : item); }); return; } if (typeof x !== ''object'') return; if (x.doc) walk(x.doc); if (x.item) walk(x.item); if (looksLikeKey(x)) { var key = normalize(x); var id = key._id || key.keyHash; if (id && !seen[id]) { seen[id] = true; result.push(key); } } Object.keys(x).forEach(function(k){ if ([''transaction'',''docs'',''rows'',''result'',''couchdb_output'',''response'',''document'',''item'',''load_api_keys''].indexOf(k) >= 0) walk(x[k]); }); } walk(v); return result; })(out)"
+        }'
+    ↓StopBusyOnInit [ngx.components.UIDynamicAction-1789062159897]: 
+      beanData: |
+        '{
+         "ionBean": "SetLocalAction",
+         "Property": "plain:busy",
+         "Value": "script:false"
+        }'
+    ↓EmitKeysLoaded [ngx.components.UIDynamicEmit-1789062159899]: 
+      beanData: |
+        '{
+         "ionBean": "EmitEventAction",
+         "event": "plain:keysLoaded",
+         "data": "script:{ application: this.local && this.local.application, count: (this.local && this.local.keys && this.local.keys.length) || 0 }"
+        }'
+  ↓InitInitialized [ngx.components.UIDynamicAction-1789064259852]: 
+    beanData: |
+      '{
+       "ionBean": "SetLocalAction",
+       "Property": "plain:initialized",
+       "Value": "script:true"
+      }'
+↓ListChanges [ngx.components.UISharedComponentEvent-1789061838310]: 
+  comment: Reloads the keys when the refreshToken input changes.
+  componentEvent: onChanges
+  ↓WhenRefreshTokenChanged [ngx.components.UIDynamicAction-1789062160701]: 
+    beanData: '{"ionBean":"IfAction","condition":"script:this.local && this.local.initialized === true && this.refreshToken !== this.local.refreshToken"}'
+    ↓StoreRefreshToken [ngx.components.UIDynamicAction-1789062161515]: 
+      beanData: |
+        '{
+         "ionBean": "SetLocalAction",
+         "Property": "plain:refreshToken",
+         "Value": "script:this.refreshToken"
+        }'
+    ↓SetBusyOnRefresh [ngx.components.UIDynamicAction-1789062161517]: 
+      beanData: |
+        '{
+         "ionBean": "SetLocalAction",
+         "Property": "plain:busy",
+         "Value": "script:true"
+        }'
+    ↓ReloadKeysOnRefresh [ngx.components.UIDynamicAction-1789062161519]: 
+      beanData: |
+        '{
+         "ionBean": "CallSequenceAction",
+         "requestable": "plain:lib_ApiKeyManager.list_api_keys",
+         "cacheTtl": "plain:0",
+         "noLoading": "plain:true"
+        }'
+      ↓RefreshFailure [ngx.components.UIActionFailureEvent-1789062161523]: 
+        ↓StoreRefreshError [ngx.components.UIDynamicAction-1789062162301]: 
+          beanData: |
+            '{
+             "ionBean": "SetLocalAction",
+             "Property": "plain:error",
+             "Value": "script:(out && out.message) || ''Erreur Convertigo.''"
+            }'
+        ↓StopBusyOnRefreshError [ngx.components.UIDynamicAction-1789062162303]: 
+          beanData: |
+            '{
+             "ionBean": "SetLocalAction",
+             "Property": "plain:busy",
+             "Value": "script:false"
+            }'
+      ↓application [ngx.components.UIControlVariable-1789062161521]: 
+        varValue: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+            - MobileSmartSourceType: script:this.local && this.local.application
+      ↓StoreKeysOnRefresh [ngx.components.UIDynamicAction-1789062162305]: 
+        beanData: |
+          '{
+           "ionBean": "SetLocalAction",
+           "Property": "plain:keys",
+           "Value": "script:(function scan(v){ var result = []; var seen = {}; function valueOf(o, n){ if (!o) return ''''; var v = o[n]; if (v == null) return ''''; if (typeof v === ''object'') { if (v._text != null) return String(v._text); if (v.text != null) return String(v.text); if (v.value != null) return String(v.value); } return String(v); } function boolOf(v){ return v === true || String(v).toLowerCase() === ''true''; } function normalize(key){ var active = boolOf(valueOf(key, ''active'') || key.active); var expiresAt = valueOf(key, ''expiresAt''); var expired = !!expiresAt && new Date(expiresAt).getTime() <= Date.now(); return {_id: valueOf(key, ''_id'') || valueOf(key, ''id''), _rev: valueOf(key, ''_rev''), type: ''apiKey'', keyHash: valueOf(key, ''keyHash''), clientId: valueOf(key, ''clientId''), scopes: valueOf(key, ''scopes''), application: valueOf(key, ''application''), active: active, expiresAt: expiresAt, createdAt: valueOf(key, ''createdAt''), label: valueOf(key, ''label''), revokedAt: valueOf(key, ''revokedAt''), status: !active ? ''revoked'' : (expired ? ''expired'' : ''active'')}; } function looksLikeKey(x){ return valueOf(x, ''type'') === ''apiKey'' || !!valueOf(x, ''keyHash''); } function walk(x){ if (!x) return; if (Array.isArray(x)) { x.forEach(function(item){ walk(item && item.doc ? item.doc : item); }); return; } if (typeof x !== ''object'') return; if (x.doc) walk(x.doc); if (x.item) walk(x.item); if (looksLikeKey(x)) { var key = normalize(x); var id = key._id || key.keyHash; if (id && !seen[id]) { seen[id] = true; result.push(key); } } Object.keys(x).forEach(function(k){ if ([''transaction'',''docs'',''rows'',''result'',''couchdb_output'',''response'',''document'',''item'',''load_api_keys''].indexOf(k) >= 0) walk(x[k]); }); } walk(v); return result; })(out)"
+          }'
+      ↓StopBusyOnRefresh [ngx.components.UIDynamicAction-1789062162307]: 
+        beanData: |
+          '{
+           "ionBean": "SetLocalAction",
+           "Property": "plain:busy",
+           "Value": "script:false"
+          }'
+      ↓EmitKeysLoadedOnRefresh [ngx.components.UIDynamicEmit-1789062162309]: 
+        beanData: |
+          '{
+           "ionBean": "EmitEventAction",
+           "event": "plain:keysLoaded",
+           "data": "script:{ application: this.local && this.local.application, count: (this.local && this.local.keys && this.local.keys.length) || 0 }"
+          }'
+↓ListPanel [ngx.components.UIElement-1788930387626]: 
+  tagName: section
+  ↓ListPanelClass [ngx.components.UIAttribute-1788930387628]: 
+    attrName: class
+    attrValue: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+        - MobileSmartSourceType: plain:akm-panel akm-list-panel
+  ↓ListHead [ngx.components.UIElement-1788930387630]: 
+    tagName: div
+    ↓ListHeadClass [ngx.components.UIAttribute-1788930387632]: 
+      attrName: class
+      attrValue: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+          - MobileSmartSourceType: plain:akm-list-head
+    ↓ListTitle [ngx.components.UIElement-1788930387634]: 
+      tagName: h2
+      ↓ListTitleText [ngx.components.UIText-1788930387636]: 
+        textValue: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+            - MobileSmartSourceType: plain:Cles
+    ↓FilterSegment [ngx.components.UIDynamicElement-1788930387638]: 
+      beanData: |
+        '{
+         "ionBean": "Segment",
+         "ControlName": "plain:name1788930387638",
+         "DoubleBinding": "source:{\"filter\":\"Local\",\"project\":\"lib_ApiKeyManager\",\"input\":\"\",\"model\":{\"data\":[{\"localObject\":\"local\"}],\"path\":\"?.filter\",\"prefix\":\"\",\"suffix\":\"\",\"custom\":\"\",\"useCustom\":false}}"
+        }'
+      tagName: ion-segment
+      ↓FilterActive [ngx.components.UIDynamicElement-1788930387644]: 
+        beanData: '{"ionBean":"SegmentButton","Value":"plain:active"}'
+        tagName: ion-segment-button
+        ↓FilterActiveText [ngx.components.UIText-1788930387648]: 
+          textValue: 
+            - xmlizable: 
+              - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+              - MobileSmartSourceType: plain:Actives
+      ↓FilterRevoked [ngx.components.UIDynamicElement-1788930387650]: 
+        beanData: '{"ionBean":"SegmentButton","Value":"plain:revoked"}'
+        tagName: ion-segment-button
+        ↓FilterRevokedText [ngx.components.UIText-1788930387654]: 
+          textValue: 
+            - xmlizable: 
+              - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+              - MobileSmartSourceType: plain:Revoquees
+      ↓FilterExpired [ngx.components.UIDynamicElement-1788930387656]: 
+        beanData: '{"ionBean":"SegmentButton","Value":"plain:expired"}'
+        tagName: ion-segment-button
+        ↓FilterExpiredText [ngx.components.UIText-1788930387660]: 
+          textValue: 
+            - xmlizable: 
+              - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+              - MobileSmartSourceType: plain:Expirees
+      ↓FilterAll [ngx.components.UIDynamicElement-1788930387662]: 
+        beanData: '{"ionBean":"SegmentButton","Value":"plain:all"}'
+        tagName: ion-segment-button
+        ↓FilterAllText [ngx.components.UIText-1788930387666]: 
+          textValue: 
+            - xmlizable: 
+              - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+              - MobileSmartSourceType: plain:Toutes
+    ↓RefreshButton [ngx.components.UIDynamicElement-1788930387470]: 
+      beanData: |
+        '{
+         "ionBean": "Button",
+         "Disabled": "script:local && local.busy === true",
+         "IonFill": "plain:clear"
+        }'
+      tagName: ion-button
+      ↓RefreshIcon [ngx.components.UIElement-1788930387476]: 
+        tagName: ion-icon
+        ↓RefreshIconName [ngx.components.UIAttribute-1788930387478]: 
+          attrName: name
+          attrValue: 
+            - xmlizable: 
+              - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+              - MobileSmartSourceType: plain:refresh-outline
+        ↓RefreshIconSlot [ngx.components.UIAttribute-1788930387480]: 
+          attrName: slot
+          attrValue: 
+            - xmlizable: 
+              - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+              - MobileSmartSourceType: plain:icon-only
+      ↓RefreshClick1 [ngx.components.UIControlEvent-1788930856398]: 
+        ↓ErrorHandler [ngx.components.UIActionErrorEvent-1788932137228]: 
+          ↓SetRefreshError [ngx.components.UIDynamicAction-1788932137990]: 
+            beanData: |
+              '{
+               "ionBean": "SetLocalAction",
+               "Property": "plain:error",
+               "Value": "script:(out && out.message) || ''Erreur Convertigo.''"
+              }'
+          ↓SetBusyFalseOnRefreshError [ngx.components.UIDynamicAction-1788932137992]: 
+            beanData: |
+              '{
+               "ionBean": "SetLocalAction",
+               "Property": "plain:busy",
+               "Value": "script:false"
+              }'
+        ↓SetBusyTrue [ngx.components.UIDynamicAction-1788932136422]: 
+          beanData: |
+            '{
+             "ionBean": "SetLocalAction",
+             "Property": "plain:busy",
+             "Value": "script:true"
+            }'
+        ↓ClearRefreshError [ngx.components.UIDynamicAction-1788932136424]: 
+          beanData: |
+            '{
+             "ionBean": "SetLocalAction",
+             "Property": "plain:error",
+             "Value": "script:''''"
+            }'
+        ↓LoadKeys [ngx.components.UIDynamicAction-1788932136426]: 
+          beanData: |
+            '{
+             "ionBean": "CallSequenceAction",
+             "requestable": "plain:lib_ApiKeyManager.list_api_keys",
+             "cacheTtl": "plain:0",
+             "noLoading": "plain:true"
+            }'
+          ↓StoreKeys [ngx.components.UIDynamicAction-1788932137224]: 
+            beanData: |
+              '{
+               "ionBean": "SetLocalAction",
+               "Property": "plain:keys",
+               "Value": "script:(function scan(v){ var result = []; var seen = {}; function valueOf(o, n){ if (!o) return ''''; var v = o[n]; if (v == null) return ''''; if (typeof v === ''object'') { if (v._text != null) return String(v._text); if (v.text != null) return String(v.text); if (v.value != null) return String(v.value); } return String(v); } function boolOf(v){ return v === true || String(v).toLowerCase() === ''true''; } function normalize(key){ var active = boolOf(valueOf(key, ''active'') || key.active); var expiresAt = valueOf(key, ''expiresAt''); var expired = !!expiresAt && new Date(expiresAt).getTime() <= Date.now(); return {_id: valueOf(key, ''_id'') || valueOf(key, ''id''), _rev: valueOf(key, ''_rev''), type: ''apiKey'', keyHash: valueOf(key, ''keyHash''), clientId: valueOf(key, ''clientId''), scopes: valueOf(key, ''scopes''), active: active, expiresAt: expiresAt, createdAt: valueOf(key, ''createdAt''), label: valueOf(key, ''label''), revokedAt: valueOf(key, ''revokedAt''), status: !active ? ''revoked'' : (expired ? ''expired'' : ''active'')}; } function looksLikeKey(x){ return valueOf(x, ''type'') === ''apiKey'' || !!valueOf(x, ''keyHash''); } function walk(x){ if (!x) return; if (Array.isArray(x)) { x.forEach(function(item){ walk(item && item.doc ? item.doc : item); }); return; } if (typeof x !== ''object'') return; if (x.doc) walk(x.doc); if (x.item) walk(x.item); if (looksLikeKey(x)) { var key = normalize(x); var id = key._id || key.keyHash; if (id && !seen[id]) { seen[id] = true; result.push(key); } } Object.keys(x).forEach(function(k){ if ([''transaction'',''docs'',''rows'',''result'',''couchdb_output'',''response'',''document'',''item'',''load_api_keys''].indexOf(k) >= 0) walk(x[k]); }); } walk(v); return result; })(out)"
+              }'
+          ↓SetBusyFalse [ngx.components.UIDynamicAction-1788932137226]: 
+            beanData: |
+              '{
+               "ionBean": "SetLocalAction",
+               "Property": "plain:busy",
+               "Value": "script:false"
+              }'
+          ↓application [ngx.components.UIControlVariable-1789061978595]: 
+            varValue: 
+              - xmlizable: 
+                - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+                - MobileSmartSourceType: script:this.local && this.local.application
+  ↓EmptyIf [ngx.components.UIControlDirective-1788930676141]: 
+    directiveExpression: '!((local && local.keys && local.keys.length) > 0)'
+    directiveName: If
+    ↓EmptyState [ngx.components.UIElement-1788930387668]: 
+      tagName: div
+      ↓EmptyClass [ngx.components.UIAttribute-1788930387670]: 
+        attrName: class
+        attrValue: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+            - MobileSmartSourceType: plain:akm-empty
+      ↓EmptyText [ngx.components.UIText-1788930387674]: 
+        textValue: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+            - MobileSmartSourceType: plain:Aucune cle dans ce filtre.
+  ↓KeyListIf [ngx.components.UIControlDirective-1788930712623]: 
+    directiveExpression: (local && local.keys && local.keys.length) > 0
+    directiveName: If
+    ↓KeyList [ngx.components.UIDynamicElement-1788930387676]: 
+      beanData: '{"ionBean":"List"}'
+      tagName: ion-list
+      ↓KeysForEach [ngx.components.UIControlDirective-1788930702733]: 
+        directiveIndexName: keyIndex
+        directiveItemName: key
+        directiveSource: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+            - MobileSmartSourceType: script:(local && local.keys) || []
+        ↓KeyItem [ngx.components.UIDynamicElement-1788930387684]: 
+          beanData: '{"ionBean":"ListItem"}'
+          tagName: ion-item
+          ↓KeyLabel [ngx.components.UIElement-1788930387688]: 
+            tagName: ion-label
+            ↓KeyTitle [ngx.components.UIElement-1788930387690]: 
+              tagName: h3
+              ↓KeyTitleText [ngx.components.UIText-1788930387692]: 
+                textValue: 
+                  - xmlizable: 
+                    - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+                    - MobileSmartSourceType: script:key.label || key.clientId || key._id
+            ↓KeyMeta [ngx.components.UIElement-1788930387694]: 
+              tagName: p
+              ↓KeyMetaText [ngx.components.UIText-1788930387696]: 
+                textValue: 
+                  - xmlizable: 
+                    - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+                    - MobileSmartSourceType: script:(key.clientId || '') + ' - ' + (key.scopes || '')
+            ↓KeyExpiry [ngx.components.UIElement-1788930387698]: 
+              tagName: p
+              ↓KeyExpiryClass [ngx.components.UIAttribute-1788930387700]: 
+                attrName: class
+                attrValue: 
+                  - xmlizable: 
+                    - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+                    - MobileSmartSourceType: plain:akm-muted
+              ↓KeyExpiryText [ngx.components.UIText-1788930387702]: 
+                textValue: 
+                  - xmlizable: 
+                    - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+                    - MobileSmartSourceType: 'script:''Expire: '' + (key.expiresAt || ''non defini'')'
+            ↓KeyHash [ngx.components.UIElement-1788930387704]: 
+              tagName: code
+              ↓KeyHashText [ngx.components.UIText-1788930387706]: 
+                textValue: 
+                  - xmlizable: 
+                    - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+                    - MobileSmartSourceType: script:key.keyHash
+          ↓KeyStatusBadge [ngx.components.UIDynamicElement-1788930387708]: 
+            beanData: '{"ionBean":"Badge","IonColor":"script:key.status === ''active'' ? ''success'' : (key.status === ''expired'' ? ''warning'' : ''medium'')"}'
+            tagName: ion-badge
+            ↓BadgeText [ngx.components.UIText-1788930387712]: 
+              textValue: 
+                - xmlizable: 
+                  - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+                  - MobileSmartSourceType: script:key.status || 'active'
+          ↓RevokeIf [ngx.components.UIControlDirective-1788930684350]: 
+            directiveExpression: key && key.status === 'active'
+            directiveName: If
+            ↓RevokeButton [ngx.components.UIDynamicElement-1788930387714]: 
+              beanData: |
+                '{
+                 "ionBean": "Button",
+                 "Disabled": "script:local && local.busy === true",
+                 "IonColor": "plain:danger",
+                 "IonFill": "plain:clear"
+                }'
+              tagName: ion-button
+              ↓RevokeIcon [ngx.components.UIElement-1788930387720]: 
+                tagName: ion-icon
+                ↓RevokeIconName [ngx.components.UIAttribute-1788930387722]: 
+                  attrName: name
+                  attrValue: 
+                    - xmlizable: 
+                      - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+                      - MobileSmartSourceType: plain:ban-outline
+                ↓RevokeIconSlot [ngx.components.UIAttribute-1788930387724]: 
+                  attrName: slot
+                  attrValue: 
+                    - xmlizable: 
+                      - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+                      - MobileSmartSourceType: plain:icon-only
+              ↓RevokeClick1 [ngx.components.UIControlEvent-1788930871266]: 
+                ↓ErrorHandler [ngx.components.UIActionErrorEvent-1788935026993]: 
+                  ↓SetRevokeError [ngx.components.UIDynamicAction-1788935027755]: 
+                    beanData: |
+                      '{
+                       "ionBean": "SetLocalAction",
+                       "Property": "plain:error",
+                       "Value": "script:(out && out.message) || ''Erreur Convertigo.''"
+                      }'
+                  ↓SetBusyFalseOnRevokeError [ngx.components.UIDynamicAction-1788935027757]: 
+                    beanData: |
+                      '{
+                       "ionBean": "SetLocalAction",
+                       "Property": "plain:busy",
+                       "Value": "script:false"
+                      }'
+                ↓ConfirmRevokeAlert [ngx.components.UIDynamicAction-1788935792232]: 
+                  beanData: |
+                    '{
+                     "ionBean": "AlertAction",
+                     "header": "plain:Confirmer la révocation",
+                     "message": "plain:Cette clé sera désactivée immédiatement. Continuer ?",
+                     "backdropDismiss": "plain:false",
+                     "button1": "plain:Annuler",
+                     "button2": "plain:Revoquer",
+                     "value1": "script:false",
+                     "value2": "script:true",
+                     "cancel1": "plain:cancel",
+                     "css2": "plain:danger"
+                    }'
+                  ↓WhenRevokeConfirmed [ngx.components.UIDynamicAction-1788935793030]: 
+                    beanData: '{"ionBean":"IfAction","condition":"script:(function(v){ return v === true || v === ''true'' || v === ''Revoquer'' || (v && (v.data === true || v.data === ''true'' || v.role === ''confirm'' || v.role === ''revoke'')); })(parent && parent.out)"}'
+                    ↓SetBusyTrue [ngx.components.UIDynamicAction-1788935793032]: 
+                      beanData: |
+                        '{
+                         "ionBean": "SetLocalAction",
+                         "Property": "plain:busy",
+                         "Value": "script:true"
+                        }'
+                    ↓ClearRevokeError [ngx.components.UIDynamicAction-1788935793034]: 
+                      beanData: |
+                        '{
+                         "ionBean": "SetLocalAction",
+                         "Property": "plain:error",
+                         "Value": "script:''''"
+                        }'
+                    ↓RevokeSequence [ngx.components.UIDynamicAction-1788935793036]: 
+                      beanData: |
+                        '{
+                         "ionBean": "CallSequenceAction",
+                         "requestable": "plain:lib_ApiKeyManager.revoke_api_key",
+                         "cacheTtl": "plain:0",
+                         "noLoading": "plain:true"
+                        }'
+                      ↓_id [ngx.components.UIControlVariable-1788935793038]: 
+                        varValue: 
+                          - xmlizable: 
+                            - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+                            - MobileSmartSourceType: script:scope.key && (scope.key._id || scope.key.id)
+                      ↓ReloadKeysAfterRevoke [ngx.components.UIDynamicAction-1788935793040]: 
+                        beanData: |
+                          '{
+                           "ionBean": "CallSequenceAction",
+                           "requestable": "plain:lib_ApiKeyManager.list_api_keys",
+                           "cacheTtl": "plain:0",
+                           "noLoading": "plain:true"
+                          }'
+                        ↓StoreKeysAfterRevoke [ngx.components.UIDynamicAction-1788935793042]: 
+                          beanData: |
+                            '{
+                             "ionBean": "SetLocalAction",
+                             "Property": "plain:keys",
+                             "Value": "script:(function scan(v){ var result = []; var seen = {}; function valueOf(o, n){ if (!o) return ''''; var v = o[n]; if (v == null) return ''''; if (typeof v === ''object'') { if (v._text != null) return String(v._text); if (v.text != null) return String(v.text); if (v.value != null) return String(v.value); } return String(v); } function boolOf(v){ return v === true || String(v).toLowerCase() === ''true''; } function normalize(key){ var active = boolOf(valueOf(key, ''active'') || key.active); var expiresAt = valueOf(key, ''expiresAt''); var expired = !!expiresAt && new Date(expiresAt).getTime() <= Date.now(); return {_id: valueOf(key, ''_id'') || valueOf(key, ''id''), _rev: valueOf(key, ''_rev''), type: ''apiKey'', keyHash: valueOf(key, ''keyHash''), clientId: valueOf(key, ''clientId''), scopes: valueOf(key, ''scopes''), active: active, expiresAt: expiresAt, createdAt: valueOf(key, ''createdAt''), label: valueOf(key, ''label''), revokedAt: valueOf(key, ''revokedAt''), status: !active ? ''revoked'' : (expired ? ''expired'' : ''active'')}; } function looksLikeKey(x){ return valueOf(x, ''type'') === ''apiKey'' || !!valueOf(x, ''keyHash''); } function walk(x){ if (!x) return; if (Array.isArray(x)) { x.forEach(function(item){ walk(item && item.doc ? item.doc : item); }); return; } if (typeof x !== ''object'') return; if (x.doc) walk(x.doc); if (x.item) walk(x.item); if (looksLikeKey(x)) { var key = normalize(x); var id = key._id || key.keyHash; if (id && !seen[id]) { seen[id] = true; result.push(key); } } Object.keys(x).forEach(function(k){ if ([''transaction'',''docs'',''rows'',''result'',''couchdb_output'',''response'',''document'',''item'',''load_api_keys''].indexOf(k) >= 0) walk(x[k]); }); } walk(v); return result; })(out)"
+                            }'
+                        ↓SetBusyFalseAfterRevoke [ngx.components.UIDynamicAction-1788935793044]: 
+                          beanData: |
+                            '{
+                             "ionBean": "SetLocalAction",
+                             "Property": "plain:busy",
+                             "Value": "script:false"
+                            }'
+                        ↓application [ngx.components.UIControlVariable-1789061979838]: 
+                          varValue: 
+                            - xmlizable: 
+                              - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+                              - MobileSmartSourceType: script:this.local && this.local.application
+                      ↓EmitKeyRevoked [ngx.components.UIDynamicEmit-1789061980652]: 
+                        beanData: |
+                          '{
+                           "ionBean": "EmitEventAction",
+                           "event": "plain:keyRevoked",
+                           "data": "script:{ id: scope.key && (scope.key._id || scope.key.id), application: this.local && this.local.application }"
+                          }'
+              ↓RevokeTooltip [ngx.components.UIAttribute-1788935023714]: 
+                attrName: title
+                attrValue: 
+                  - xmlizable: 
+                    - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+                    - MobileSmartSourceType: plain:Revoquer cette cle
+              ↓RevokeAriaLabel [ngx.components.UIAttribute-1788935026072]: 
+                attrName: aria-label
+                attrValue: 
+                  - xmlizable: 
+                    - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+                    - MobileSmartSourceType: plain:Revoquer cette cle
+          ↓ReactivateIf [ngx.components.UIControlDirective-1788930693615]: 
+            directiveExpression: key && key.status === 'revoked'
+            directiveName: If
+            ↓ReactivateButton [ngx.components.UIDynamicElement-1788930387726]: 
+              beanData: |
+                '{
+                 "ionBean": "Button",
+                 "Disabled": "script:local && local.busy === true",
+                 "IonColor": "plain:success",
+                 "IonFill": "plain:clear"
+                }'
+              tagName: ion-button
+              ↓ReactivateIcon [ngx.components.UIElement-1788930387732]: 
+                tagName: ion-icon
+                ↓ReactivateIconName [ngx.components.UIAttribute-1788930387734]: 
+                  attrName: name
+                  attrValue: 
+                    - xmlizable: 
+                      - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+                      - MobileSmartSourceType: plain:checkmark-circle-outline
+                ↓ReactivateIconSlot [ngx.components.UIAttribute-1788930387736]: 
+                  attrName: slot
+                  attrValue: 
+                    - xmlizable: 
+                      - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+                      - MobileSmartSourceType: plain:icon-only
+              ↓ReactivateClick1 [ngx.components.UIControlEvent-1788930875456]: 
+                ↓ErrorHandler [ngx.components.UIActionErrorEvent-1788932160643]: 
+                  ↓SetReactivateError [ngx.components.UIDynamicAction-1788932161405]: 
+                    beanData: |
+                      '{
+                       "ionBean": "SetLocalAction",
+                       "Property": "plain:error",
+                       "Value": "script:(out && out.message) || ''Erreur Convertigo.''"
+                      }'
+                  ↓SetBusyFalseOnReactivateError [ngx.components.UIDynamicAction-1788932161407]: 
+                    beanData: |
+                      '{
+                       "ionBean": "SetLocalAction",
+                       "Property": "plain:busy",
+                       "Value": "script:false"
+                      }'
+                ↓SetBusyTrue [ngx.components.UIDynamicAction-1788932159833]: 
+                  beanData: |
+                    '{
+                     "ionBean": "SetLocalAction",
+                     "Property": "plain:busy",
+                     "Value": "script:true"
+                    }'
+                ↓ClearReactivateError [ngx.components.UIDynamicAction-1788932159835]: 
+                  beanData: |
+                    '{
+                     "ionBean": "SetLocalAction",
+                     "Property": "plain:error",
+                     "Value": "script:''''"
+                    }'
+                ↓ReactivateSequence [ngx.components.UIDynamicAction-1788932159837]: 
+                  beanData: |
+                    '{
+                     "ionBean": "CallSequenceAction",
+                     "requestable": "plain:lib_ApiKeyManager.reactivate_api_key",
+                     "cacheTtl": "plain:0",
+                     "noLoading": "plain:true"
+                    }'
+                  ↓_id [ngx.components.UIControlVariable-1788932160635]: 
+                    varValue: 
+                      - xmlizable: 
+                        - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+                        - MobileSmartSourceType: script:scope.key && (scope.key._id || scope.key.id)
+                  ↓ReloadKeysAfterReactivate [ngx.components.UIDynamicAction-1788932160637]: 
+                    beanData: |
+                      '{
+                       "ionBean": "CallSequenceAction",
+                       "requestable": "plain:lib_ApiKeyManager.list_api_keys",
+                       "cacheTtl": "plain:0",
+                       "noLoading": "plain:true"
+                      }'
+                    ↓StoreKeysAfterReactivate [ngx.components.UIDynamicAction-1788932160639]: 
+                      beanData: |
+                        '{
+                         "ionBean": "SetLocalAction",
+                         "Property": "plain:keys",
+                         "Value": "script:(function scan(v){ var result = []; var seen = {}; function valueOf(o, n){ if (!o) return ''''; var v = o[n]; if (v == null) return ''''; if (typeof v === ''object'') { if (v._text != null) return String(v._text); if (v.text != null) return String(v.text); if (v.value != null) return String(v.value); } return String(v); } function boolOf(v){ return v === true || String(v).toLowerCase() === ''true''; } function normalize(key){ var active = boolOf(valueOf(key, ''active'') || key.active); var expiresAt = valueOf(key, ''expiresAt''); var expired = !!expiresAt && new Date(expiresAt).getTime() <= Date.now(); return {_id: valueOf(key, ''_id'') || valueOf(key, ''id''), _rev: valueOf(key, ''_rev''), type: ''apiKey'', keyHash: valueOf(key, ''keyHash''), clientId: valueOf(key, ''clientId''), scopes: valueOf(key, ''scopes''), active: active, expiresAt: expiresAt, createdAt: valueOf(key, ''createdAt''), label: valueOf(key, ''label''), revokedAt: valueOf(key, ''revokedAt''), status: !active ? ''revoked'' : (expired ? ''expired'' : ''active'')}; } function looksLikeKey(x){ return valueOf(x, ''type'') === ''apiKey'' || !!valueOf(x, ''keyHash''); } function walk(x){ if (!x) return; if (Array.isArray(x)) { x.forEach(function(item){ walk(item && item.doc ? item.doc : item); }); return; } if (typeof x !== ''object'') return; if (x.doc) walk(x.doc); if (x.item) walk(x.item); if (looksLikeKey(x)) { var key = normalize(x); var id = key._id || key.keyHash; if (id && !seen[id]) { seen[id] = true; result.push(key); } } Object.keys(x).forEach(function(k){ if ([''transaction'',''docs'',''rows'',''result'',''couchdb_output'',''response'',''document'',''item'',''load_api_keys''].indexOf(k) >= 0) walk(x[k]); }); } walk(v); return result; })(out)"
+                        }'
+                    ↓SetBusyFalseAfterReactivate [ngx.components.UIDynamicAction-1788932160641]: 
+                      beanData: |
+                        '{
+                         "ionBean": "SetLocalAction",
+                         "Property": "plain:busy",
+                         "Value": "script:false"
+                        }'
+                    ↓application [ngx.components.UIControlVariable-1789061981466]: 
+                      varValue: 
+                        - xmlizable: 
+                          - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+                          - MobileSmartSourceType: script:this.local && this.local.application
+                  ↓EmitKeyReactivated [ngx.components.UIDynamicEmit-1789061982280]: 
+                    beanData: |
+                      '{
+                       "ionBean": "EmitEventAction",
+                       "event": "plain:keyReactivated",
+                       "data": "script:{ id: scope.key && (scope.key._id || scope.key.id), application: this.local && this.local.application }"
+                      }'
+          ↓KeyFilterHidden [ngx.components.UIAttribute-1788932235795]: 
+            attrName: '[hidden]'
+            attrValue: 
+              - xmlizable: 
+                - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+                - MobileSmartSourceType: script:((local && local.filter) || 'active') !== 'all' && key.status !== ((local && local.filter) || 'active')
+      ↓KeyListClass [ngx.components.UIAttribute-1788930387678]: 
+        attrName: class
+        attrValue: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+            - MobileSmartSourceType: plain:akm-key-list
+      ↓KeyListLines [ngx.components.UIAttribute-1788930387680]: 
+        attrName: lines
+        attrValue: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+            - MobileSmartSourceType: plain:none
+  ↓DashboardErrorIf [ngx.components.UIControlDirective-1788930720491]: 
+    directiveExpression: '!!(local && local.error)'
+    directiveName: If
+    ↓DashboardError [ngx.components.UIElement-1788930387738]: 
+      tagName: ion-note
+      ↓DashboardErrorColor [ngx.components.UIAttribute-1788930387740]: 
+        attrName: color
+        attrValue: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+            - MobileSmartSourceType: plain:danger
+      ↓DashboardErrorText [ngx.components.UIText-1788930387744]: 
+        textValue: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+            - MobileSmartSourceType: script:(local && local.error) || ''
+↓ListStyle [ngx.components.UIStyle-1789062164743]: 
+  comment: Encapsulated styles for the key list.
+  styleContent: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.FormatedContent
+      - com.twinsoft.convertigo.beans.common.FormatedContent: 
+        →: |
+          ':host {
+            --akm-border: #d5dde8;
+            --akm-surface: #ffffff;
+            --akm-soft: #f4f7fb;
+            --akm-text: #182235;
+            --akm-muted: #5f6f85;
+          }
+          
+          h2, h3, p { margin-top: 0; }
+          h2 { margin-bottom: 12px; color: var(--akm-text); font-size: 18px; }
+          
+          .akm-panel {
+            border: 1px solid var(--akm-border);
+            border-radius: 8px;
+            background: var(--akm-surface);
+            padding: 18px;
+            box-shadow: 0 12px 28px rgba(24, 34, 53, 0.08);
+          }
+          
+          .akm-list-panel { display: grid; gap: 12px; }
+          
+          .akm-list-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+          }
+          
+          .akm-list-head ion-segment { width: min(100%, 560px); }
+          
+          .akm-muted { color: var(--akm-muted); }
+          
+          .akm-empty {
+            border: 1px dashed var(--akm-border);
+            border-radius: 8px;
+            padding: 22px;
+            color: var(--akm-muted);
+            text-align: center;
+          }
+          
+          .akm-key-list { background: transparent; padding: 0; }
+          
+          .akm-key-list ion-item {
+            --background: var(--akm-soft);
+            --border-radius: 8px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+          }
+          
+          .akm-key-list ion-badge { margin-inline: 10px; }
+          
+          .akm-key-list code {
+            display: block;
+            max-width: 100%;
+            overflow-wrap: anywhere;
+            white-space: normal;
+          }
+          '

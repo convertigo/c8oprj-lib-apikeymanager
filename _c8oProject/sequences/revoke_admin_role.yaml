@@ -1,0 +1,21 @@
+accessibility: Private
+comment: 'Host application integration: call this sequence from your logout sequence to remove the delegated API Key Manager administrator role from the session.'
+↓remove_role [steps.SimpleStep-1789061497670]: 
+  expression: |
+    'var __req = context.httpServletRequest;
+    var __session = (__req == null) ? context.httpSession : __req.getSession(false);
+    if (__session != null) { __session.removeAttribute(''apiKeyManager.role''); }
+    revokeRoleResult = { status: ''ok'', role: '''' };'
+↓result [steps.JsonToXmlStep-1789061497672]: 
+  jsonObject: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+      - SmartType: 
+        - ↑mode: JS
+        - →→: revokeRoleResult
+  key: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+      - SmartType: 
+        - ↑mode: PLAIN
+        - →→: result

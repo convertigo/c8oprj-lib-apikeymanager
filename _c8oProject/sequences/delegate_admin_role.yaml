@@ -1,0 +1,22 @@
+accessibility: Private
+authenticatedContextRequired: true
+comment: 'Host application integration: call this sequence (Call Sequence step) from your own login sequence, after you authenticated the user and verified it may administer API keys. It marks the current session as API Key Manager administrator (session attribute apiKeyManager.role=admin).'
+↓grant_role [steps.SimpleStep-1789061497640]: 
+  expression: |
+    'var __req = context.httpServletRequest;
+    var __session = (__req == null) ? context.httpSession : __req.getSession(true);
+    __session.setAttribute(''apiKeyManager.role'', ''admin'');
+    delegateResult = { status: ''ok'', role: ''admin'', user: String(context.getAuthenticatedUser()) };'
+↓result [steps.JsonToXmlStep-1789061497642]: 
+  jsonObject: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+      - SmartType: 
+        - ↑mode: JS
+        - →→: delegateResult
+  key: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+      - SmartType: 
+        - ↑mode: PLAIN
+        - →→: result

@@ -2,6 +2,7 @@ comment: 'Internal API key repository compatible with UrlMapperDemo: stores SHA-
 databaseName: api_keys_store
 secureDatabase: true
 ↓create_api_key [transactions.couchdb.PostDocumentTransaction]: 
+  authenticatedContextRequired: true
   comment: 'Internal API key provisioning: stores keyHash only, never the raw key.'
   fullSyncAclPolicy: anonymous
   policy: create
@@ -31,10 +32,13 @@ secureDatabase: true
     comment: ISO-8601 revocation timestamp, empty while active.
   ↓scopeList [variables.RequestableMultiValuedVariable-1788889970580]: 
     comment: Scopes as an array for validation convenience; scopes string remains the compatibility field.
+  ↓application [variables.RequestableVariable-1789061497709]: 
+    comment: Host application identifier owning this key (multi-application isolation).
+    value: default
 ↓find_api_key_by_hash [transactions.couchdb.PostFindTransaction]: 
   comment: Internal lookup of an active API key by SHA-256 fingerprint. Raw keys must never be sent to FullSync.
   p_limit: 1
-  p_selector: '(function(){ var selector = { keyHash: keyHash, ''$and'': [ { ''$or'': [ { active: true }, { active: ''true'' } ] }, { ''$or'': [ { expiresAt: { ''$exists'': false } }, { expiresAt: '''' }, { expiresAt: { ''$gt'': now } } ] } ] }; if (typeof requiredScope != ''undefined'' && String(requiredScope).trim() != '''') { var raw = String(requiredScope).trim(); var escaped = ''''; var specials = ''.+?^=!:()|[]\\''; for (var i = 0; i < raw.length; i++) { var ch = raw.charAt(i); escaped += specials.indexOf(ch) >= 0 ? ''\\'' + ch : ch; } selector.scopes = { ''$regex'': ''(^|\\s)'' + escaped + ''(\\s|$)'' }; } return selector; })()'
+  p_selector: '(function(){ var selector = { keyHash: keyHash, ''$and'': [ { ''$or'': [ { active: true }, { active: ''true'' } ] }, { ''$or'': [ { expiresAt: { ''$exists'': false } }, { expiresAt: '''' }, { expiresAt: { ''$gt'': now } } ] } ] }; if (typeof requiredScope != ''undefined'' && requiredScope != null && String(requiredScope).trim() != '''') { var raw = String(requiredScope).trim(); var escaped = ''''; var specials = ''.+?^=!:()|[]\\''; for (var i = 0; i < raw.length; i++) { var ch = raw.charAt(i); escaped += specials.indexOf(ch) >= 0 ? ''\\'' + ch : ch; } selector.scopes = { ''$regex'': ''(^|\\s)'' + escaped + ''(\\s|$)'' }; } var a = (typeof application == ''undefined'' || application == null) ? '''' : String(application).trim(); if (a != '''' && a != ''null'' && a != ''undefined'') { selector[''$and''].push({ ''$or'': (a == ''default'') ? [ { application: a }, { application: { ''$exists'': false } }, { application: '''' } ] : [ { application: a } ] }); } return selector; })()'
   ↓keyHash [variables.RequestableVariable-1788889907791]: 
     comment: SHA-256 fingerprint of the supplied API key.
     required: true
@@ -47,13 +51,20 @@ secureDatabase: true
     comment: Optional required scope for validation.
   ↓now [variables.RequestableVariable-1788890150607]: 
     comment: Current ISO-8601 timestamp for expiration filtering.
+  ↓application [variables.RequestableVariable-1789061497824]: 
+    comment: Optional host application the key must belong to. 'default' also matches legacy keys without application.
 ↓initialize_api_keys_database [transactions.couchdb.ResetDatabaseTransaction]: 
+  authenticatedContextRequired: true
   comment: Initializes the dedicated API key database. Do not run on production data.
 ↓list_api_keys [transactions.couchdb.PostFindTransaction]: 
+  authenticatedContextRequired: true
   comment: Lists API key metadata without exposing raw API keys.
   p_limit: 500
-  p_selector: '({ type: ''apiKey'' })'
+  p_selector: '(function(){ var s = { type: ''apiKey'' }; var a = (typeof application == ''undefined'' || application == null) ? '''' : String(application).trim(); if (a != '''' && a != ''null'' && a != ''undefined'') { s[''$or''] = (a == ''default'') ? [ { application: a }, { application: { ''$exists'': false } }, { application: '''' } ] : [ { application: a } ]; } return s; })()'
+  ↓application [variables.RequestableVariable-1789061497764]: 
+    comment: Optional host application filter. 'default' also matches legacy keys without application.
 ↓update_api_key [transactions.couchdb.PostDocumentTransaction]: 
+  authenticatedContextRequired: true
   comment: Updates API key metadata by document id; used for revoke, reactivate and scope/expiration changes.
   fullSyncAclPolicy: anonymous
   policy: merge

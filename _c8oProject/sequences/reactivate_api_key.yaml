@@ -1,6 +1,21 @@
 accessibility: Hidden
 authenticatedContextRequired: true
 comment: Reactivates an existing API key document.
+↓require_web_admin [steps.SimpleStep-1789060270331]: 
+  comment: Accepts a Convertigo WEB_ADMIN session or a delegated admin role set by the host application (session attribute apiKeyManager.role=admin via lib_ApiKeyManager.delegate_admin_role).
+  expression: |
+    'var __req = context.httpServletRequest;
+    var __session = (__req == null) ? null : __req.getSession(false);
+    var __isAdmin = false, __delegated = false;
+    try {
+      __isAdmin = __session != null && Packages.com.twinsoft.convertigo.engine.Engine.authenticatedSessionManager.hasRole(__session, Packages.com.twinsoft.convertigo.engine.AuthenticatedSessionManager.Role.WEB_ADMIN);
+    } catch (e) { __isAdmin = false; }
+    try {
+      __delegated = __session != null && String(__session.getAttribute(''apiKeyManager.role'')) == ''admin'';
+    } catch (e) { __delegated = false; }
+    if (!__isAdmin && !__delegated) {
+      throw new Error("Privileges administrateur requis pour l''API Key Manager (session Convertigo WEB_ADMIN ou role delegue par l''application hote).");
+    }'
 ↓prepare_reactivate [steps.SimpleStep-1788890116255]: 
   comment: Marks the selected key active again.
   expression: |

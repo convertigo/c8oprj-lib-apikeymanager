@@ -1,6 +1,21 @@
 accessibility: Hidden
 authenticatedContextRequired: true
 comment: Generates a raw API key once, stores only its SHA-256 fingerprint, and returns metadata plus the raw secret one time.
+↓require_web_admin [steps.SimpleStep-1789060270197]: 
+  comment: Accepts a Convertigo WEB_ADMIN session or a delegated admin role set by the host application (session attribute apiKeyManager.role=admin via lib_ApiKeyManager.delegate_admin_role).
+  expression: |
+    'var __req = context.httpServletRequest;
+    var __session = (__req == null) ? null : __req.getSession(false);
+    var __isAdmin = false, __delegated = false;
+    try {
+      __isAdmin = __session != null && Packages.com.twinsoft.convertigo.engine.Engine.authenticatedSessionManager.hasRole(__session, Packages.com.twinsoft.convertigo.engine.AuthenticatedSessionManager.Role.WEB_ADMIN);
+    } catch (e) { __isAdmin = false; }
+    try {
+      __delegated = __session != null && String(__session.getAttribute(''apiKeyManager.role'')) == ''admin'';
+    } catch (e) { __delegated = false; }
+    if (!__isAdmin && !__delegated) {
+      throw new Error("Privileges administrateur requis pour l''API Key Manager (session Convertigo WEB_ADMIN ou role delegue par l''application hote).");
+    }'
 ↓prepare_api_key [steps.SimpleStep-1788890077903]: 
   comment: Generates the raw API key and its SHA-256 hash; only keyHash is persisted.
   expression: |
@@ -35,7 +50,11 @@ comment: Generates a raw API key once, stores only its SHA-256 fingerprint, and 
     type = ''apiKey'';
     if (typeof label == ''undefined'' || String(label).trim() == '''') {
       label = String(clientId || ''client'') + '' API key'';
-    }'
+    }
+    if (typeof application == ''undefined'' || String(application).trim() == '''') {
+      application = ''default'';
+    }
+    application = String(application).trim();'
 ↓store_api_key [steps.TransactionStep-1788890077940]: 
   comment: Persists only the hash and metadata in FullSync.
   output: true
@@ -55,6 +74,7 @@ comment: Generates a raw API key once, stores only its SHA-256 fingerprint, and 
   ↓createdAt [variables.StepVariable-1788890078235]: 
   ↓label [variables.StepVariable-1788890078276]: 
   ↓revokedAt [variables.StepVariable-1788890078317]: 
+  ↓application [variables.StepVariable-1789061498196]: 
 ↓api_key_result [steps.JsonObjectStep-1788890078351]: 
   key: 
     - xmlizable: 
@@ -141,6 +161,19 @@ comment: Generates a raw API key once, stores only its SHA-256 fingerprint, and 
         - SmartType: 
           - ↑mode: JS
           - →→: expiresAt
+  ↓application [steps.JsonFieldStep-1789061498235]: 
+    key: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: PLAIN
+          - →→: application
+    value: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.steps.SmartType
+        - SmartType: 
+          - ↑mode: JS
+          - →→: application
 ↓clientId [variables.RequestableVariable-1788889990921]: 
   comment: Stable client identifier.
   required: true
@@ -151,3 +184,6 @@ comment: Generates a raw API key once, stores only its SHA-256 fingerprint, and 
   value: resources:read
 ↓expiresAt [variables.RequestableVariable-1788889991046]: 
   comment: ISO-8601 expiration timestamp. Defaults to one year from now when empty.
+↓application [variables.RequestableVariable-1789061498017]: 
+  comment: Host application identifier owning this key. Defaults to 'default'.
+  value: default

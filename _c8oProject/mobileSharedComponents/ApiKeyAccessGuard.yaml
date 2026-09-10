@@ -1,0 +1,210 @@
+comment: 'Checks the API Key Manager administrator authorization (Convertigo WEB_ADMIN session or role delegated by the host application) and shows an explanatory message when the session is not authorized. Input: application. Event: authorizationChecked {authorized, authority, message}.'
+↓GuardInit [ngx.components.UISharedComponentEvent-1789061588728]: 
+  comment: Checks the administrator authorization when the component is displayed.
+  componentEvent: onInit
+  ↓InitAdminChecked [ngx.components.UIDynamicAction-1789062153437]: 
+    beanData: |
+      '{
+       "ionBean": "SetLocalAction",
+       "Property": "plain:adminChecked",
+       "Value": "script:false"
+      }'
+  ↓InitAuthorized [ngx.components.UIDynamicAction-1789062153439]: 
+    beanData: |
+      '{
+       "ionBean": "SetLocalAction",
+       "Property": "plain:authorized",
+       "Value": "script:false"
+      }'
+  ↓InitAdminMessage [ngx.components.UIDynamicAction-1789062153441]: 
+    beanData: |
+      '{
+       "ionBean": "SetLocalAction",
+       "Property": "plain:adminMessage",
+       "Value": "script:''''"
+      }'
+  ↓CheckAdminStatus [ngx.components.UIDynamicAction-1789062153443]: 
+    beanData: |
+      '{
+       "ionBean": "CallSequenceAction",
+       "requestable": "plain:lib_ApiKeyManager.admin_status",
+       "cacheTtl": "plain:0",
+       "noLoading": "plain:true"
+      }'
+    ↓AdminStatusFailure [ngx.components.UIActionFailureEvent-1789062154257]: 
+      ↓StoreUnauthorizedOnFailure [ngx.components.UIDynamicAction-1789062155035]: 
+        beanData: |
+          '{
+           "ionBean": "SetLocalAction",
+           "Property": "plain:authorized",
+           "Value": "script:false"
+          }'
+      ↓StoreFailureMessage [ngx.components.UIDynamicAction-1789062155037]: 
+        beanData: |
+          '{
+           "ionBean": "SetLocalAction",
+           "Property": "plain:adminMessage",
+           "Value": "script:''Privileges administrateur requis. Impossible de verifier la session.''"
+          }'
+      ↓StoreAdminCheckedOnFailure [ngx.components.UIDynamicAction-1789062155039]: 
+        beanData: |
+          '{
+           "ionBean": "SetLocalAction",
+           "Property": "plain:adminChecked",
+           "Value": "script:true"
+          }'
+      ↓EmitUnauthorized [ngx.components.UIDynamicEmit-1789062155041]: 
+        beanData: |
+          '{
+           "ionBean": "EmitEventAction",
+           "event": "plain:authorizationChecked",
+           "data": "script:{ authorized: false, authority: '''', message: ''Privileges administrateur requis. Impossible de verifier la session.'' }"
+          }'
+    ↓StoreAuthorized [ngx.components.UIDynamicAction-1789062155043]: 
+      beanData: |
+        '{
+         "ionBean": "SetLocalAction",
+         "Property": "plain:authorized",
+         "Value": "script:(function(r){ return r.authorized === true || String(r.authorized) === ''true''; })(out && out.result ? out.result : (out || {}))"
+        }'
+    ↓StoreAdminMessage [ngx.components.UIDynamicAction-1789062155045]: 
+      beanData: |
+        '{
+         "ionBean": "SetLocalAction",
+         "Property": "plain:adminMessage",
+         "Value": "script:(out && out.result ? out.result : (out || {})).message || ''''"
+        }'
+    ↓StoreAdminChecked [ngx.components.UIDynamicAction-1789062155047]: 
+      beanData: |
+        '{
+         "ionBean": "SetLocalAction",
+         "Property": "plain:adminChecked",
+         "Value": "script:true"
+        }'
+    ↓EmitAuthorizationChecked [ngx.components.UIDynamicEmit-1789062155049]: 
+      beanData: |
+        '{
+         "ionBean": "EmitEventAction",
+         "event": "plain:authorizationChecked",
+         "data": "script:(function(r){ return { authorized: r.authorized === true || String(r.authorized) === ''true'', authority: r.authority || '''', message: r.message || '''' }; })(out && out.result ? out.result : (out || {}))"
+        }'
+↓application [ngx.components.UICompVariable-1789061608625]: 
+  comment: Host application identifier used to scope API keys.
+  value: '''default'''
+↓authorizationChecked [ngx.components.UICompEvent-1789061845874]: 
+  attrName: authorizationChecked
+  comment: Emitted once the authorization is known, with {authorized, authority, message}.
+↓UnauthorizedIf [ngx.components.UIControlDirective-1789060277595]: 
+  directiveExpression: '!!(local && local.adminChecked === true && local.authorized !== true)'
+  directiveName: If
+  ↓UnauthorizedSection [ngx.components.UIElement-1789060279953]: 
+    tagName: section
+    ↓UnauthorizedClass [ngx.components.UIAttribute-1789060279955]: 
+      attrName: class
+      attrValue: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+          - MobileSmartSourceType: plain:akm-login
+    ↓UnauthorizedPanel [ngx.components.UIElement-1789060279957]: 
+      tagName: div
+      ↓UnauthorizedPanelClass [ngx.components.UIAttribute-1789060279959]: 
+        attrName: class
+        attrValue: 
+          - xmlizable: 
+            - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+            - MobileSmartSourceType: plain:akm-panel akm-login-panel
+      ↓UnauthorizedKicker [ngx.components.UIElement-1789060279961]: 
+        tagName: p
+        ↓UnauthorizedKickerClass [ngx.components.UIAttribute-1789060279963]: 
+          attrName: class
+          attrValue: 
+            - xmlizable: 
+              - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+              - MobileSmartSourceType: plain:akm-kicker
+        ↓UnauthorizedKickerText [ngx.components.UIText-1789060279965]: 
+          textValue: 
+            - xmlizable: 
+              - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+              - MobileSmartSourceType: plain:Convertigo API keys
+      ↓UnauthorizedTitle [ngx.components.UIElement-1789060279967]: 
+        tagName: h1
+        ↓UnauthorizedTitleText [ngx.components.UIText-1789060279969]: 
+          textValue: 
+            - xmlizable: 
+              - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+              - MobileSmartSourceType: plain:Session administrateur requise
+      ↓UnauthorizedHelp [ngx.components.UIElement-1789060279971]: 
+        tagName: p
+        ↓UnauthorizedHelpClass [ngx.components.UIAttribute-1789060279973]: 
+          attrName: class
+          attrValue: 
+            - xmlizable: 
+              - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+              - MobileSmartSourceType: plain:akm-muted
+        ↓UnauthorizedHelpText [ngx.components.UIText-1789060279975]: 
+          textValue: 
+            - xmlizable: 
+              - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+              - MobileSmartSourceType: plain:Cette application fonctionne uniquement avec une session Convertigo authentifiee disposant des privileges administrateur (WEB_ADMIN). Ouvrez-la depuis la console d'administration Convertigo apres vous etre connecte en tant qu'administrateur.
+      ↓UnauthorizedNote [ngx.components.UIElement-1789060279977]: 
+        tagName: ion-note
+        ↓UnauthorizedNoteColor [ngx.components.UIAttribute-1789060279979]: 
+          attrName: color
+          attrValue: 
+            - xmlizable: 
+              - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+              - MobileSmartSourceType: plain:danger
+        ↓UnauthorizedNoteText [ngx.components.UIText-1789060279981]: 
+          textValue: 
+            - xmlizable: 
+              - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+              - MobileSmartSourceType: script:(local && local.adminMessage) || ''
+↓GuardStyle [ngx.components.UIStyle-1789062157483]: 
+  comment: Encapsulated styles for the unauthorized message.
+  styleContent: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.FormatedContent
+      - com.twinsoft.convertigo.beans.common.FormatedContent: 
+        →: |
+          ':host {
+            --akm-border: #d5dde8;
+            --akm-surface: #ffffff;
+            --akm-soft: #f4f7fb;
+            --akm-text: #182235;
+            --akm-muted: #5f6f85;
+          }
+          
+          h1, h2, h3, p { margin-top: 0; }
+          
+          h1 { margin-bottom: 4px; color: var(--akm-text); font-size: 30px; line-height: 1.15; }
+          
+          .akm-login {
+            min-height: calc(100vh - 88px);
+            display: grid;
+            place-items: center;
+          }
+          
+          .akm-panel {
+            border: 1px solid var(--akm-border);
+            border-radius: 8px;
+            background: var(--akm-surface);
+            padding: 18px;
+            box-shadow: 0 12px 28px rgba(24, 34, 53, 0.08);
+          }
+          
+          .akm-login-panel {
+            width: min(100%, 440px);
+            display: grid;
+            gap: 14px;
+          }
+          
+          .akm-kicker {
+            margin: 0 0 4px;
+            color: #0f766e;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+          }
+          
+          .akm-muted { color: var(--akm-muted); }
+          '

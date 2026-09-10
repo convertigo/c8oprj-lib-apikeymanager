@@ -1,7 +1,25 @@
 accessibility: Hidden
 authenticatedContextRequired: true
 comment: Lists API key metadata without exposing raw API keys.
+↓require_web_admin [steps.SimpleStep-1789060270250]: 
+  comment: Accepts a Convertigo WEB_ADMIN session or a delegated admin role set by the host application (session attribute apiKeyManager.role=admin via lib_ApiKeyManager.delegate_admin_role).
+  expression: |
+    'var __req = context.httpServletRequest;
+    var __session = (__req == null) ? null : __req.getSession(false);
+    var __isAdmin = false, __delegated = false;
+    try {
+      __isAdmin = __session != null && Packages.com.twinsoft.convertigo.engine.Engine.authenticatedSessionManager.hasRole(__session, Packages.com.twinsoft.convertigo.engine.AuthenticatedSessionManager.Role.WEB_ADMIN);
+    } catch (e) { __isAdmin = false; }
+    try {
+      __delegated = __session != null && String(__session.getAttribute(''apiKeyManager.role'')) == ''admin'';
+    } catch (e) { __delegated = false; }
+    if (!__isAdmin && !__delegated) {
+      throw new Error("Privileges administrateur requis pour l''API Key Manager (session Convertigo WEB_ADMIN ou role delegue par l''application hote).");
+    }'
 ↓load_api_keys [steps.TransactionStep-1788890115774]: 
   comment: Returns API key documents for the admin UI.
   output: true
   sourceTransaction: lib_ApiKeyManager.api_keys_store.list_api_keys
+  ↓application [variables.StepVariable-1789061498309]: 
+↓application [variables.RequestableVariable-1789061498280]: 
+  comment: Optional host application filter. Empty lists every key; 'default' also includes legacy keys.

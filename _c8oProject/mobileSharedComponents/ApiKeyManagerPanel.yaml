@@ -1,0 +1,125 @@
+comment: 'Drop-in API key management panel: creation form plus key list, wired together. Input: application. Events: keyCreated, keyRevoked, keyReactivated.'
+↓application [ngx.components.UICompVariable-1789061843432]: 
+  comment: Host application identifier.
+  value: '''default'''
+↓keyCreated [ngx.components.UICompEvent-1789061843434]: 
+  attrName: keyCreated
+↓keyRevoked [ngx.components.UICompEvent-1789061843436]: 
+  attrName: keyRevoked
+↓keyReactivated [ngx.components.UICompEvent-1789061843438]: 
+  attrName: keyReactivated
+↓PanelInit [ngx.components.UISharedComponentEvent-1789061843440]: 
+  comment: Initializes the refresh token used to reload the list after a creation.
+  componentEvent: onInit
+  ↓InitApplication [ngx.components.UIDynamicAction-1789062250183]: 
+    beanData: |
+      '{
+       "ionBean": "SetLocalAction",
+       "Property": "plain:application",
+       "Value": "script:this.application || ''default''"
+      }'
+  ↓InitRefreshToken [ngx.components.UIDynamicAction-1789062250185]: 
+    beanData: |
+      '{
+       "ionBean": "SetLocalAction",
+       "Property": "plain:refreshToken",
+       "Value": "script:0"
+      }'
+↓PanelStyle [ngx.components.UIStyle-1789062170435]: 
+  comment: 'Two-column layout: creation form on the left, key list on the right.'
+  styleContent: 
+    - xmlizable: 
+      - ↑classname: com.twinsoft.convertigo.beans.common.FormatedContent
+      - com.twinsoft.convertigo.beans.common.FormatedContent: 
+        →: |
+          ':host { display: block; }
+          
+          .akm-grid {
+            display: grid;
+            grid-template-columns: minmax(280px, 420px) minmax(280px, 1fr);
+            gap: 18px;
+            align-items: start;
+          }
+          
+          @media (max-width: 860px) {
+            .akm-grid { grid-template-columns: 1fr; }
+          }
+          '
+↓PanelGrid [ngx.components.UIElement-1789062172869]: 
+  tagName: div
+  ↓PanelGridClass [ngx.components.UIAttribute-1789062175267]: 
+    attrName: class
+    attrValue: 
+      - xmlizable: 
+        - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+        - MobileSmartSourceType: plain:akm-grid
+  ↓UseCreateForm [ngx.components.UIUseShared-1789062175269]: 
+    sharedcomponent: lib_ApiKeyManager.Application.NgxApp.ApiKeyCreateForm
+    ↓application [ngx.components.UIUseVariable-1789062252619]: 
+      varValue: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+          - MobileSmartSourceType: script:this.local.application
+    ↓OnKeyCreated [ngx.components.UIControlEvent-1789062252621]: 
+      attrName: (keyCreated)
+      eventName: keyCreated
+      ↓BumpRefreshToken [ngx.components.UIDynamicAction-1789062253423]: 
+        beanData: |
+          '{
+           "ionBean": "SetLocalAction",
+           "Property": "plain:refreshToken",
+           "Value": "script:Date.now()"
+          }'
+      ↓ForwardKeyCreated [ngx.components.UIDynamicEmit-1789062253425]: 
+        beanData: |
+          '{
+           "ionBean": "EmitEventAction",
+           "event": "plain:keyCreated",
+           "data": "script:out"
+          }'
+    ↓defaultClientId [ngx.components.UIUseVariable-1789065714535]: 
+      varValue: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+          - MobileSmartSourceType: script:this.defaultClientId
+    ↓defaultLabel [ngx.components.UIUseVariable-1789065716969]: 
+      varValue: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+          - MobileSmartSourceType: script:this.defaultLabel
+  ↓UseKeyList [ngx.components.UIUseShared-1789062175271]: 
+    sharedcomponent: lib_ApiKeyManager.Application.NgxApp.ApiKeyList
+    ↓application [ngx.components.UIUseVariable-1789062255859]: 
+      varValue: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+          - MobileSmartSourceType: script:this.local.application
+    ↓refreshToken [ngx.components.UIUseVariable-1789062255861]: 
+      varValue: 
+        - xmlizable: 
+          - ↑classname: com.twinsoft.convertigo.beans.ngx.components.MobileSmartSourceType
+          - MobileSmartSourceType: script:this.local.refreshToken
+    ↓OnKeyRevoked [ngx.components.UIControlEvent-1789062255863]: 
+      attrName: (keyRevoked)
+      eventName: keyRevoked
+      ↓ForwardKeyRevoked [ngx.components.UIDynamicEmit-1789062256665]: 
+        beanData: |
+          '{
+           "ionBean": "EmitEventAction",
+           "event": "plain:keyRevoked",
+           "data": "script:out"
+          }'
+    ↓OnKeyReactivated [ngx.components.UIControlEvent-1789062256667]: 
+      attrName: (keyReactivated)
+      eventName: keyReactivated
+      ↓ForwardKeyReactivated [ngx.components.UIDynamicEmit-1789062256669]: 
+        beanData: |
+          '{
+           "ionBean": "EmitEventAction",
+           "event": "plain:keyReactivated",
+           "data": "script:out"
+          }'
+↓defaultClientId [ngx.components.UICompVariable-1789065709667]: 
+  comment: Initial client identifier shown in the creation form.
+↓defaultLabel [ngx.components.UICompVariable-1789065712101]: 
+  comment: Initial label shown in the creation form.
