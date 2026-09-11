@@ -64,7 +64,7 @@
   contextTimeout: 59
   corsOrigin: =Origin
   httpSessionTimeout: 60
-  version: 8.4.4
+  version: 1.0.0
   ↓api_keys_store [connectors.FullSyncConnector]: 🗏 connectors/api_keys_store.yaml
   ↓void [connectors.SqlConnector]: 🗏 connectors/void.yaml
   ↓admin_status [sequences.GenericSequence]: 🗏 sequences/admin_status.yaml
